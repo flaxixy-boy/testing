@@ -1,0 +1,2432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>B4UFFEU - Topup Center</title>
+    <!-- Favicon -->
+    <link rel="icon" type="image/webp" href="assets/images/b4uffeu.webp">
+    <link rel="apple-touch-icon" href="assets/images/b4uffeu.webp">
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <!-- Chart JS for Spin Wheel -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-datalabels/2.1.0/chartjs-plugin-datalabels.min.js"></script>
+    <!-- Header CSS -->
+    <link rel="stylesheet" href="pages/pc_header/css/header.css">
+    <!-- Mobile Header CSS -->
+    <link rel="stylesheet" href="pages/mobile_header/css/mobile_header.css">
+    <!-- Mobile Menu CSS -->
+    <link rel="stylesheet" href="pages/mobile_menu/css/mobile_menu.css">
+    <!-- Shop CSS -->
+    <link rel="stylesheet" href="pages/shop/css/shop.css">
+    <!-- UID Topup BD CSS -->
+    <link rel="stylesheet" href="pages/shop/UID Topup BD/css/uid_topup_bd.css">
+    <!-- Weekly Monthly CSS -->
+    <link rel="stylesheet" href="pages/shop/Weekly Monthly/css/weekly_monthly.css">
+    <!-- Level Up Pass CSS -->
+    <link rel="stylesheet" href="pages/shop/Level Up Pass/css/level_up_pass.css">
+    <!-- UID Evo Access CSS -->
+    <link rel="stylesheet" href="pages/shop/UID Evo Access/css/uid_evo_access.css">
+    <!-- Footer CSS -->
+    <link rel="stylesheet" href="pages/footer/css/footer.css">
+    <!-- Login CSS -->
+    <link rel="stylesheet" href="pages/login/css/login.css">
+    <!-- Register CSS -->
+    <link rel="stylesheet" href="pages/register/css/register.css">
+    <!-- Payment CSS -->
+    <link rel="stylesheet" href="pages/payment/css/payment.css">
+    <!-- Support CSS -->
+    <link rel="stylesheet" href="pages/support/css/support.css">
+    <link rel="stylesheet" href="pages/support/css/ai_popup.css">
+
+    <style>
+        /* Skeleton Pulse Animation */
+        @keyframes pulse { 0% { opacity: 0.5; } 50% { opacity: 0.2; } 100% { opacity: 0.5; } }
+        .skeleton { background: rgba(255, 255, 255, 0.05); border-radius: 12px; animation: pulse 1.5s infinite; }
+
+        @font-face {
+            font-family: 'B4UFFEU-Normal';
+            src: url('assets/fonts/normal/Roboto-Regular.ttf') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+        }
+        @font-face {
+            font-family: 'B4UFFEU-Normal';
+            src: url('assets/fonts/normal/Roboto-Bold.ttf') format('truetype');
+            font-weight: bold;
+            font-style: normal;
+        }
+        @font-face {
+            font-family: 'B4UFFEU-Stylish';
+            src: url('assets/fonts/stylish/LifeSavers-Bold.ttf') format('truetype');
+            font-weight: bold;
+            font-style: normal;
+        }
+
+        html {
+            background-color: #0011ff; /* Deep Blue Fallback */
+            background: radial-gradient(circle, #0011ff 0%, #000000 100%);
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            min-height: 100dvh;
+            font-family: 'B4UFFEU-Normal', sans-serif;
+            position: relative;
+            overflow-x: hidden;
+            background: transparent;
+        }
+
+        #site-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+        .bg-img, .bg-container iframe, .bg-container video {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(1.1);
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: blur(8px);
+        }
+
+        .bg-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        #bg-desktop-container { display: block; }
+        #bg-mobile-container { display: none; }
+
+        @media (max-width: 768px) {
+            #bg-desktop-container { display: none; }
+            #bg-mobile-container { display: block; }
+            .bg-img, .bg-container iframe, .bg-container video { transform: translate(-50%, -50%) scale(1.05); }
+        }
+
+        #main-content {
+            position: relative;
+            z-index: 1;
+            padding: 20px;
+        }
+
+        @media (max-width: 768px) {
+            #main-content { padding-top: 80px; padding-bottom: 100px; }
+        }
+
+        #toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .toast {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: white;
+            padding: 12px 25px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            font-size: 14px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transform: translateX(120%);
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border-left: 4px solid #00d2ff;
+        }
+
+        .toast.show { transform: translateX(0); }
+        .toast i { color: #00d2ff; font-size: 18px; }
+        .toast-lang-btn { background: #00d2ff; color: white; border: none; padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: bold; cursor: pointer; margin-left: auto; transition: 0.3s; white-space: nowrap; }
+
+        .slider-action-btn {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(0, 210, 255, 0.7);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 8px 18px;
+            border-radius: 30px;
+            font-size: 11px;
+            font-weight: 600;
+            cursor: pointer;
+            z-index: 100;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+        .slider-action-btn:hover {
+            background: #00d2ff;
+            color: #000;
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 8px 20px rgba(0, 210, 255, 0.4);
+        }
+        .slider-action-btn i { font-size: 10px; }
+
+        @media (max-width: 768px) {
+            .slider-action-btn {
+                bottom: 12px;
+                right: 12px;
+                padding: 6px 12px;
+                font-size: 9px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            #toast-container { top: auto; bottom: 100px; left: 50%; right: auto; transform: translateX(-50%); width: 90%; }
+            .toast { transform: translateY(150%); justify-content: center; text-align: center; }
+            .toast.show { transform: translateY(0); }
+        }
+
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.4); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; z-index: 9999; animation: fadeIn 0.3s ease; }
+        .modal-content { background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 20px; padding: 20px; width: 85%; max-width: 320px; box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5); animation: slideUp 0.3s ease; text-align: center; color: white; }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .modal-header h3 { margin: 0; font-size: 18px; color: #fff; font-weight: 600; }
+        .close-modal { background: rgba(255, 255, 255, 0.1); border: none; color: white; width: 28px; height: 28px; border-radius: 50%; font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.3s; }
+        .close-modal:hover { background: rgba(255, 0, 0, 0.3); }
+        .logout-modal-content p { color: rgba(255, 255, 255, 0.8); margin-bottom: 25px; font-size: 15px; }
+        .modal-actions { display: flex; gap: 12px; }
+        .cancel-btn { flex: 1; padding: 12px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; color: white; cursor: pointer; transition: 0.3s; }
+        .confirm-logout-btn { flex: 1; padding: 12px; background: #ff4444; border: none; border-radius: 12px; color: white; font-weight: bold; cursor: pointer; transition: 0.3s; }
+        .confirm-logout-btn:hover { background: #ff6666; box-shadow: 0 0 15px rgba(255, 68, 68, 0.4); }
+        .save-btn { width: 100%; padding: 10px; background: #00d2ff; border: none; border-radius: 10px; color: #1a1a1a; font-size: 15px; font-weight: bold; cursor: pointer; transition: 0.3s; }
+
+        /* Bright Corner Ribbon Stock Out Style */
+        .recharge-item.stock-out {
+            overflow: hidden;
+            opacity: 0.9; /* অপাসিটি বাড়ানো হলো */
+            filter: none; /* গ্রেস্কেল সরিয়ে ফেলা হলো যাতে কালার উজ্জ্বল থাকে */
+            cursor: not-allowed !important;
+            position: relative;
+            pointer-events: none;
+            border-color: rgba(255, 0, 0, 0.5);
+        }
+
+        .recharge-item.stock-out::before {
+            content: 'STOCK OUT';
+            position: absolute;
+            top: 14px;
+            right: -32px;
+            width: 130px;
+            background: linear-gradient(45deg, #ff0000, #ff4d4d); /* উজ্জ্বল গ্র্যাডিয়েন্ট রেড */
+            color: white;
+            font-size: 10px;
+            font-weight: 900;
+            padding: 6px 0;
+            text-align: center;
+            transform: rotate(45deg);
+            box-shadow: 0 0 15px rgba(255, 0, 0, 0.6); /* উজ্জ্বল গ্লো (Glow) এফেক্ট */
+            z-index: 5;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            border-top: 1px solid rgba(255, 255, 255, 0.5);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+        }
+
+        /* শুধু ভেতরের টেক্সট ঝাপসা করার জন্য */
+        .recharge-item.stock-out .recharge-details {
+            opacity: 0.4;
+            filter: grayscale(0.5);
+        }
+
+        .recharge-item.stock-out .diamond-amount,
+        .recharge-item.stock-out .price-amount {
+            transition: 0.3s;
+        }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+        /* Global Payment Hover Fix for Videos */
+        .payment-item:hover .payment-video-box,
+        .payment-item.selected .payment-video-box,
+        .product-card:hover iframe,
+        .product-card:hover video,
+        .social-btn:hover .auth-social-video-box {
+            transform: scale(1.05);
+            filter: grayscale(0%);
+            opacity: 1;
+        }
+
+        .payment-video-box, .product-image iframe, .product-image video, .auth-social-video-box {
+            transition: all 0.3s ease;
+            will-change: transform;
+        }
+
+        /* Discount / Price Styles */
+        .price-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
+        }
+
+        .original-price {
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.3);
+            text-decoration: line-through;
+            font-weight: 500;
+        }
+
+        .price-amount.discounted {
+            color: #00ff88 !important;
+        }
+
+        .price-amount.increased {
+            color: #ff4d4d !important;
+        }
+
+        .price-indicator {
+            font-size: 10px;
+            margin-left: 4px;
+            vertical-align: middle;
+        }
+        .price-indicator.down { color: #00ff88; }
+        .price-indicator.up { color: #ff4d4d; }
+    </style>
+</head>
+<body>
+    <div id="site-background">
+        <div id="bg-desktop-container" class="bg-container">
+            <img class="bg-img" src="assets/images/b4uffeu_bg_16-9.png" alt="background">
+        </div>
+        <div id="bg-mobile-container" class="bg-container">
+            <img class="bg-img" src="assets/images/b4uffeu_bg_9-16.png" alt="background">
+        </div>
+    </div>
+
+    <script>
+        function lockUI() {
+            const bg = document.getElementById('site-background');
+            const vh = window.innerHeight;
+            if (bg) bg.style.height = vh + 'px';
+        }
+        window.addEventListener('load', lockUI);
+        window.addEventListener('resize', () => {
+            lockUI();
+            forceNoticeUpdate();
+        });
+        lockUI();
+    </script>
+
+    <header id="header-container" class="main-header"></header>
+    <div id="mobile-header-container"></div>
+    <div id="mobile-menu-container"></div>
+    <div id="toast-container"></div>
+    <div id="ai-popup-container"></div>
+
+    <div id="global-logout-modal" class="modal-overlay" style="display: none;">
+        <div class="modal-content logout-modal-content">
+            <div class="modal-header"><h3>Confirm Logout</h3><button class="close-modal" onclick="closeGlobalLogoutModal()">&times;</button></div>
+            <div class="modal-body">
+                <p>Are you sure you want to logout from your account?</p>
+                <div class="modal-actions">
+                    <button class="cancel-btn" onclick="closeGlobalLogoutModal()">Cancel</button>
+                    <button class="confirm-logout-btn" onclick="confirmGlobalSignOut()">Logout</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="global-alert-modal" class="modal-overlay" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header"><h3 id="alert-title">Notification</h3><button class="close-modal" onclick="closeGlobalAlert()">&times;</button></div>
+            <div class="modal-body">
+                <p id="alert-message"></p>
+                <div id="alert-timer-box" style="margin-top: 15px; font-size: 13px; color: #00d2ff; font-weight: bold; display: none;">
+                    Redirecting in <span id="alert-timer">3</span>s...
+                </div>
+            </div>
+            <div class="modal-actions" id="alert-actions" style="margin-top: 20px;"><button class="save-btn" onclick="closeGlobalAlert()">OK</button></div>
+        </div>
+    </div>
+
+    <main id="main-content"></main>
+
+    <div id="support-menu" class="support-menu">
+        <a href="https://wa.me/8801768161025" target="_blank" class="support-item support-whatsapp" data-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+        <a href="https://t.me/b4uffeuadmin" target="_blank" class="support-item support-telegram" data-label="Telegram"><i class="fab fa-telegram-plane"></i></a>
+        <a href="#" class="support-item support-ai" data-label="B4U AI" onclick="openAI(); return false;"><i class="fas fa-robot" style="color: white; font-size: 20px;"></i></a>
+    </div>
+
+    <a href="#" class="floating-support-btn" onclick="toggleSupportMenu(); return false;"><i class="fas fa-headset" id="support-icon"></i></a>
+    <footer id="footer-container" class="main-footer"></footer>
+
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-functions-compat.js"></script>
+    <script src="js/firebase-config.js"></script>
+    <script src="js/shared_utils.js"></script>
+    <script src="pages/support/js/support.js"></script>
+
+    <script>
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+        const functions = firebase.functions();
+
+        let currentPage = 'Shop';
+        let currentLang = 'en';
+        let userStatusListener = null;
+
+        function toggleGlobalUI(show) {
+            const display = show ? 'block' : 'none';
+            const flexDisplay = show ? 'flex' : 'none';
+
+            const header = document.getElementById('header-container');
+            const mobileHeader = document.getElementById('mobile-header-container');
+            const mobileMenu = document.getElementById('mobile-menu-container');
+            const footer = document.getElementById('footer-container');
+            const supportBtn = document.querySelector('.floating-support-btn');
+
+            if (header) header.style.display = display;
+            if (mobileHeader) mobileHeader.style.display = display;
+            if (mobileMenu) mobileMenu.style.display = display;
+            if (footer) footer.style.display = display;
+            if (supportBtn) supportBtn.style.display = flexDisplay;
+        }
+
+        function checkUserStatus(user) {
+            if (userStatusListener) {
+                userStatusListener();
+                userStatusListener = null;
+            }
+
+            if (user) {
+                userStatusListener = db.collection("users").doc(user.uid).onSnapshot((doc) => {
+                    if (!doc.exists) return;
+
+                    const data = doc.data();
+                    const isBanned = data.status === 'banned' || data.isBanned === true || data.banned === true;
+                    const isDeleted = data.status === 'deleted' || data.isDeleted === true;
+                    const isSuspended = data.status === 'suspended';
+
+                    if (isBanned || isDeleted || isSuspended) {
+                        // স্ট্যাটাস মেমোরিতে সেভ রাখা যাতে নেভিগেশন লক করা যায়
+                        sessionStorage.setItem('userRestriction', isSuspended ? 'suspended' : 'banned');
+
+                        // গ্লোবাল ইউআই হাইড করা
+                        toggleGlobalUI(false);
+
+                        // আপিল পেজে থাকলে ডিস্টার্ব করবে না
+                        const urlParams = new URLSearchParams(window.location.search);
+                        if (urlParams.get('page') === 'banned_appeal') return;
+
+                        // নির্দিষ্ট পেজে ফরোয়ার্ড করা
+                        if (isSuspended) {
+                            if (!window.location.href.includes('page=banned')) loadBannedPage();
+                        } else {
+                            if (!window.location.href.includes('page=deleted')) loadDeletedPage();
+                        }
+                    } else {
+                        // যদি ইউজার আনব্যান হয় তবে মেমোরি ক্লিয়ার করা এবং ইউআই দেখানো
+                        if (sessionStorage.getItem('userRestriction')) {
+                            sessionStorage.removeItem('userRestriction');
+                            toggleGlobalUI(true);
+                            window.location.href = window.location.pathname + "?page=shop";
+                        }
+                    }
+                });
+            }
+        }
+
+        async function handleForcedLogout(enTitle, enMsg, bnTitle, bnMsg, userData = null) {
+            const user = auth.currentUser;
+            let displayEmail = (userData && userData.email) || (user && user.email) || 'Suspended Account';
+            let displayName = (userData && (userData.displayName || userData.name)) || (user && user.displayName) || 'User Account';
+            let photoURL = (userData && userData.photoURL) || (user && user.photoURL) || null;
+            let uid = (userData && (userData.uid || userData.id)) || (user && user.uid) || null;
+
+            sessionStorage.setItem('lastBannedUser', JSON.stringify({
+                displayName: displayName, email: displayEmail, photoURL: photoURL, uid: uid
+            }));
+
+            if (userStatusListener) { userStatusListener(); userStatusListener = null; }
+
+            try {
+                await auth.signOut(); // Critical permission errors require logout
+                loadBannedPage();
+            } catch (error) { console.error(error); }
+        }
+
+        // Admin Utility: Call Cloud Function to delete a user's Auth account
+        async function adminDeleteUserAuth(targetUid) {
+            const deleteUserAuth = functions.httpsCallable('deleteUserAuth');
+            try {
+                const result = await deleteUserAuth({ uid: targetUid });
+                console.log(result.data.message);
+                return result.data;
+            } catch (error) {
+                console.error("Admin Action Failed:", error.message);
+                throw error;
+            }
+        }
+
+        function updateAuthUI() {
+            const user = auth.currentUser;
+            const authButtons = document.querySelector('.auth-buttons');
+            const mobileLoginBtn = document.querySelector('.mobile-login-btn');
+            const mobileHeader = document.getElementById('mobile-header-container');
+
+            if (user) {
+                if (authButtons) {
+                    authButtons.innerHTML = `
+                        <div class="user-header-profile" onmouseenter="this.classList.add('active')" onmouseleave="this.classList.remove('active')">
+                            <div class="user-icon-circle" onclick="loadProfile()">
+                                ${user.photoURL ? `<img src="${user.photoURL}" alt="User">` : '<i class="fas fa-user-circle"></i>'}
+                            </div>
+                            <div class="user-hover-menu">
+                                <div class="menu-user-info"><span class="menu-name">${user.displayName || 'User'}</span><span class="menu-email">${user.email}</span></div>
+                                <div class="menu-divider"></div>
+                                <a href="#" class="menu-item" onclick="loadProfile(); return false;"><i class="fas fa-user-cog"></i> My Profile</a>
+                                <a href="#" class="menu-item logout" onclick="handleSignOut(); return false;"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                            </div>
+                        </div>`;
+                }
+                if (mobileLoginBtn) mobileLoginBtn.style.display = 'none';
+                if (mobileHeader) mobileHeader.classList.add('user-logged-in');
+            } else {
+                if (authButtons) {
+                    authButtons.innerHTML = `
+                        <a href="#" class="login-btn" onclick="loadLoginPage(); return false;"><i class="fas fa-user"></i> Login</a>
+                        <a href="#" class="register-btn" onclick="loadRegisterPage(); return false;"><i class="fas fa-user-plus"></i> Register</a>`;
+                }
+                if (mobileLoginBtn) {
+                    mobileLoginBtn.style.display = 'flex';
+                    mobileLoginBtn.innerHTML = `<i class="fas fa-user"></i> <span>Sign In</span>`;
+                    mobileLoginBtn.onclick = (e) => { e.preventDefault(); loadLoginPage(); };
+                }
+                if (mobileHeader) mobileHeader.classList.remove('user-logged-in');
+            }
+
+            const buyNowBtn = document.getElementById('buy-now-btn');
+            if (buyNowBtn) {
+                if (!user) {
+                    buyNowBtn.innerHTML = `<i class="fas fa-sign-in-alt"></i> Login First`;
+                    buyNowBtn.classList.add('login-required-btn');
+                } else {
+                    buyNowBtn.innerHTML = `<i class="fas fa-cart-shopping"></i> Buy Now`;
+                    buyNowBtn.classList.remove('login-required-btn');
+                }
+            }
+        }
+
+        auth.onAuthStateChanged((user) => {
+            updateAuthUI();
+            checkUserStatus(user);
+            if (user) {
+                // Save user info to localStorage for banned page fallback
+                const userInfo = {
+                    uid: user.uid,
+                    displayName: user.displayName,
+                    photoURL: user.photoURL,
+                    email: user.email,
+                    lastSeen: Date.now()
+                };
+                localStorage.setItem('b4u_last_user_' + user.email, JSON.stringify(userInfo));
+            }
+        });
+
+        document.addEventListener('click', function(e) {
+            const btn = e.target.closest('.login-required-btn');
+            if (btn) { e.preventDefault(); e.stopImmediatePropagation(); loadLoginPage(); }
+        }, true);
+
+        function handleSignOut(customMsgEn = null, customMsgBn = null) {
+            const modal = document.getElementById('global-logout-modal');
+            const modalP = modal.querySelector('.logout-modal-content p');
+            const modalTitle = modal.querySelector('.modal-header h3');
+
+            if (modalP) {
+                if (customMsgEn && currentLang === 'en') modalP.innerText = customMsgEn;
+                else if (customMsgBn && currentLang === 'bn') modalP.innerText = customMsgBn;
+                else {
+                    modalP.innerText = currentLang === 'en' ? "Are you sure you want to logout from your account?" : "আপনি কি আপনার অ্যাকাউন্ট থেকে লগআউট করতে নিশ্চিত?";
+                }
+            }
+
+            if (modalTitle) {
+                modalTitle.innerText = currentLang === 'en' ? "Confirm Logout" : "লগআউট নিশ্চিত করুন";
+            }
+
+            modal.style.display = 'flex';
+        }
+        function closeGlobalLogoutModal() { document.getElementById('global-logout-modal').style.display = 'none'; }
+        async function confirmGlobalSignOut() {
+            try {
+                await auth.signOut();
+                closeGlobalLogoutModal();
+                showToast("Logged out successfully!", "লগআউট সফল হয়েছে!", "fa-sign-out-alt");
+                loadShop();
+            } catch (error) { console.error("Signout Error:", error); }
+        }
+
+        function showGlobalAlert(title, message, timer = null, onComplete = null) {
+            document.getElementById('alert-title').innerText = title;
+            document.getElementById('alert-message').innerText = message;
+            const timerBox = document.getElementById('alert-timer-box');
+            const timerEl = document.getElementById('alert-timer');
+            const modal = document.getElementById('global-alert-modal');
+            const actions = document.getElementById('alert-actions');
+            modal.style.display = 'flex';
+            if (timer) {
+                timerBox.style.display = 'block'; actions.style.display = 'none';
+                let timeLeft = timer; timerEl.innerText = timeLeft;
+                const interval = setInterval(() => {
+                    timeLeft--; timerEl.innerText = timeLeft;
+                    if (timeLeft <= 0) { clearInterval(interval); closeGlobalAlert(); if (onComplete) onComplete(); }
+                }, 1000);
+            } else { timerBox.style.display = 'none'; actions.style.display = 'flex'; }
+        }
+        function closeGlobalAlert() { document.getElementById('global-alert-modal').style.display = 'none'; }
+
+        function updateActiveStates(pageName) {
+            currentPage = pageName;
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.toggle('active', item.innerText.trim() === pageName);
+            });
+            document.querySelectorAll('.mobile-nav-item').forEach(item => {
+                const text = item.querySelector('span').innerText.trim();
+                item.classList.toggle('active', text === pageName);
+            });
+        }
+
+        function updateActiveToastsAndResetTimers() {
+            document.querySelectorAll('.toast').forEach(toast => {
+                const enMsg = toast.getAttribute('data-en'), bnMsg = toast.getAttribute('data-bn'), nextLang = currentLang === 'en' ? 'bn' : 'en';
+                const msgEl = toast.querySelector('.toast-msg');
+                const langBtn = toast.querySelector('.toast-lang-btn');
+                if (msgEl) msgEl.innerText = currentLang === 'en' ? enMsg : bnMsg;
+                if (langBtn) {
+                    langBtn.innerText = currentLang === 'en' ? 'বাং' : 'EN';
+                    langBtn.onclick = (e) => { e.stopPropagation(); toggleLanguage(nextLang); updateActiveToastsAndResetTimers(); };
+                }
+                if (typeof toast.resetTimer === 'function') toast.resetTimer();
+            });
+        }
+
+        function toggleLanguage(lang) {
+            currentLang = lang;
+            if (typeof switchLang === 'function') switchLang(lang);
+        }
+
+        async function loadHeader() {
+            try {
+                const headerRes = await fetch('pages/pc_header/html/header.html');
+                const headerHtml = await headerRes.text();
+                document.getElementById('header-container').innerHTML = headerHtml;
+                updateAuthUI();
+                const iconsRes = await fetch('pages/pc_header/widgets/header_icons.html');
+                const namesRes = await fetch('pages/pc_header/widgets/header_names.html');
+                const iconsHtml = await iconsRes.text(), namesHtml = await namesRes.text();
+                const iconDiv = document.createElement('div'); iconDiv.innerHTML = iconsHtml;
+                const icons = iconDiv.querySelectorAll('.header-icon');
+                const nameDiv = document.createElement('div'); nameDiv.innerHTML = namesHtml;
+                const names = nameDiv.querySelectorAll('.header-name');
+                const navMenu = document.getElementById('nav-menu');
+                names.forEach((name, index) => {
+                    const navItem = document.createElement('a');
+                    navItem.className = 'nav-item'; navItem.href = '#';
+                    const iconHtml = icons[index] ? icons[index].innerHTML : '';
+                    navItem.innerHTML = `<span class="nav-icon">${iconHtml}</span> ${name.innerText}`;
+                    if (name.innerText.trim() === currentPage) navItem.classList.add('active');
+
+                    const pageName = name.innerText.trim();
+                    // Hide Spin if disabled
+                    if (pageName === 'Spin') {
+                        navItem.id = 'nav-item-spin';
+                        const spinData = window.globalShops ? window.globalShops.find(s => s.id === 'spin') : null;
+                        if (spinData && spinData.active === false) navItem.style.display = 'none';
+                    }
+
+                    navItem.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        const pageName = name.innerText.trim();
+                        if (pageName === 'Shop') loadShop();
+                        else if (pageName === 'Spin') loadSpin();
+                        else if (pageName === 'My Order') loadMyOrder();
+                        else if (pageName === 'Offers') loadOffers();
+                        else if (pageName === 'Profile') loadProfile();
+                        updateActiveStates(pageName);
+                    });
+                    navMenu.appendChild(navItem);
+                });
+            } catch (error) { console.error("Error loading header:", error); }
+        }
+
+        async function loadMobileMenu() {
+            try {
+                const res = await fetch('pages/mobile_menu/html/mobile_menu.html');
+                const html = await res.text();
+                document.getElementById('mobile-menu-container').innerHTML = html;
+                const iconsRes = await fetch('pages/mobile_menu/widgets/mobile_icons.html');
+                const namesRes = await fetch('pages/mobile_menu/widgets/mobile_names.html');
+                const iconsHtml = await iconsRes.text(), namesHtml = await namesRes.text();
+                const iconDiv = document.createElement('div'); iconDiv.innerHTML = iconsHtml;
+                const icons = iconDiv.querySelectorAll('.mobile-icon');
+                const nameDiv = document.createElement('div'); nameDiv.innerHTML = namesHtml;
+                const names = nameDiv.querySelectorAll('.mobile-name');
+                const mobileNav = document.getElementById('mobile-nav');
+                icons.forEach((icon, index) => {
+                    const nameText = names[index] ? names[index].innerText.trim() : '';
+                    const navItem = document.createElement('a');
+                    navItem.className = 'mobile-nav-item';
+                    if (nameText === currentPage) navItem.classList.add('active');
+
+                    if (nameText === 'Spin') {
+                        navItem.id = 'mobile-nav-item-spin';
+                        const spinData = window.globalShops ? window.globalShops.find(s => s.id === 'spin') : null;
+                        if (spinData && spinData.active === false) navItem.style.display = 'none';
+                    }
+
+                    navItem.href = '#';
+                    let iconHtml = icon.innerHTML;
+                    if (nameText === 'Profile' && auth.currentUser && auth.currentUser.photoURL) {
+                        iconHtml = `<img src="${auth.currentUser.photoURL}" style="width: 22px; height: 22px; border-radius: 50%; object-fit: cover; border: 1.5px solid #00d2ff;">`;
+                    }
+                    navItem.innerHTML = `<div class="mobile-nav-icon-wrapper">${iconHtml}</div><span>${nameText}</span>`;
+                    navItem.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        updateActiveStates(nameText);
+                        if (nameText === 'Shop') loadShop();
+                        else if (nameText === 'Spin') loadSpin();
+                        else if (nameText === 'My Order') loadMyOrder();
+                        else if (nameText === 'Offers') loadOffers();
+                        else if (nameText === 'Profile') loadProfile();
+                    });
+                    mobileNav.appendChild(navItem);
+                });
+                safeLoadScript('pages/mobile_menu/js/mobile_menu.js');
+            } catch (error) { console.error("Error loading mobile menu:", error); }
+        }
+
+        async function loadMobileHeader() {
+            try {
+                const res = await fetch('pages/mobile_header/html/mobile_header.html');
+                const html = await res.text();
+                document.getElementById('mobile-header-container').innerHTML = html;
+                updateAuthUI();
+            } catch (error) { console.error("Error loading mobile header:", error); }
+        }
+
+        async function loadFooter() {
+            try {
+                const res = await fetch('pages/footer/html/footer.html');
+                const html = await res.text();
+                document.getElementById('footer-container').innerHTML = html;
+
+                // Update dynamic content in footer after it's loaded
+                if (typeof updateAiBranding === 'function') updateAiBranding();
+                if (typeof applyGeneralSettings === 'function') applyGeneralSettings();
+            } catch (error) { console.error("Error loading footer:", error); }
+        }
+
+        async function loadLoginPage(pushState = true) {
+            if (window.globalAuthSettings && window.globalAuthSettings.loginEnabled === false) {
+                showToast("Login is temporarily disabled.", "লগইন সাময়িকভাবে বন্ধ আছে।", "fa-lock");
+                return;
+            }
+            try {
+                updateActiveStates('');
+                const res = await fetch('pages/login/html/login.html');
+                const html = await res.text();
+                document.getElementById('main-content').innerHTML = html;
+                window.scrollTo(0, 0);
+
+                updateSocialAuthIcons();
+
+                if (pushState) history.pushState({ page: 'login' }, 'Login', '?page=login');
+                safeLoadScript('pages/login/js/login.js', () => { if(typeof initLoginPage === 'function') initLoginPage(); });
+            } catch (error) { console.error("Error loading login:", error); }
+        }
+
+        async function loadRegisterPage(pushState = true) {
+            if (window.globalAuthSettings && window.globalAuthSettings.registerEnabled === false) {
+                showToast("Registration is temporarily disabled.", "রেজিস্ট্রেশন সাময়িকভাবে বন্ধ আছে।", "fa-lock");
+                return;
+            }
+            try {
+                updateActiveStates('');
+                const res = await fetch('pages/register/html/register.html');
+                const html = await res.text();
+                document.getElementById('main-content').innerHTML = html;
+                window.scrollTo(0, 0);
+
+                updateSocialAuthIcons();
+
+                if (pushState) history.pushState({ page: 'register' }, 'Register', '?page=register');
+                safeLoadScript('pages/register/js/register.js', () => { if(typeof initRegisterPage === 'function') initRegisterPage(); });
+            } catch (error) { console.error("Error loading register:", error); }
+        }
+
+        function updateSocialAuthIcons() {
+            if (!window.globalAuthSettings) return;
+
+            const updateIcon = (selector, mediaUrl, defaultSrc) => {
+                const container = document.querySelector(selector);
+                if (!container) return;
+
+                const url = (mediaUrl && mediaUrl.includes('://')) ? mediaUrl : defaultSrc;
+                const isVideo = url.toLowerCase().match(/\.(mp4|webm|ogg|mov|avi)/) || url.includes('youtube.com') || url.includes('youtu.be');
+                const oldImg = container.querySelector('img');
+
+                if (isVideo) {
+                    if (oldImg) oldImg.style.display = 'none';
+                    let vBox = container.querySelector('.auth-social-video-box');
+                    if (!vBox) {
+                        vBox = document.createElement('div');
+                        vBox.className = 'auth-social-video-box';
+                        vBox.style.width = '24px';
+                        vBox.style.height = '24px';
+                        vBox.style.borderRadius = '4px';
+                        vBox.style.overflow = 'hidden';
+                        vBox.style.display = 'flex';
+                        vBox.style.alignItems = 'center';
+                        vBox.style.justifyContent = 'center';
+                        container.insertBefore(vBox, container.firstChild);
+                    }
+
+                    if (url.includes('youtube.com') || url.includes('youtu.be')) {
+                        let videoId = "";
+                        if (url.includes('v=')) videoId = url.split('v=')[1].split('&')[0];
+                        else if (url.includes('youtu.be/')) videoId = url.split('youtu.be/')[1].split('?')[0];
+                        if (videoId) {
+                            vBox.innerHTML = `<iframe src="https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&loop=1&playlist=${videoId}&controls=0" frameborder="0" style="width:100%; height:100%; pointer-events:none; transform: scale(1.5);"></iframe>`;
+                        }
+                    } else {
+                        vBox.innerHTML = `<video src="${url}" autoplay muted loop playsinline style="width:100%; height:100%; object-fit:cover;"></video>`;
+                    }
+                } else {
+                    if (oldImg) {
+                        oldImg.src = url;
+                        oldImg.style.display = 'block';
+                    }
+                    const oldV = container.querySelector('.auth-social-video-box');
+                    if (oldV) oldV.remove();
+                }
+            };
+
+            updateIcon('.google-btn', window.globalAuthSettings.googleImage, 'assets/images/auth_images/google.png');
+            updateIcon('.facebook-btn', window.globalAuthSettings.facebookImage, 'assets/images/auth_images/facebook.png');
+        }
+
+        let shopListener = null;
+        let sliderListener = null;
+        let noticeListener = null;
+        let paymentMethodsListener = null;
+        let authSettingsListener = null;
+        let aiSettingsListener = null;
+        let generalSettingsListener = null;
+        let policiesListener = null;
+        let statusListener = null;
+        window.globalShops = [];
+        window.globalSliderData = null;
+        window.globalNoticeData = null;
+        window.globalPaymentMethods = {};
+        window.globalAuthSettings = { loginEnabled: true, registerEnabled: true };
+        window.globalAiSettings = { isActive: true, keys: [], systemPrompt: "" };
+        window.globalGeneralSettings = { siteName: "B4UFFEU", logoUrl: "", whatsapp: "", telegram: "", fbPage: "", youtube: "", isMaintenance: false };
+        window.globalPolicies = { privacyPolicy: "", termsConditions: "", refundPolicy: "" };
+        window.globalWebStatus = { isActive: false, mode: 'maintenance', reason: '', contactMethod: 'WhatsApp', contactValue: '' };
+
+        async function loadShop(pushState = true) {
+            if (sessionStorage.getItem('userRestriction')) { handleRestrictedAccess(); return; }
+            try {
+                updateActiveStates('Shop');
+
+                const shopUrl = 'pages/shop/html/shop.html';
+                let html = templateCache[shopUrl];
+                if (!html) {
+                    const res = await fetch(shopUrl);
+                    html = await res.text();
+                    templateCache[shopUrl] = html;
+                }
+
+                // 1. Inject Template to Live DOM
+                document.getElementById('main-content').innerHTML = html;
+
+                // 2. Force Render Shops & Slider from Memory
+                const grid = document.getElementById('shop-product-grid');
+                if (grid && window.globalShops.length > 0) {
+                    renderShops(grid, window.globalShops);
+                } else if (grid) {
+                    renderSkeleton(grid);
+                }
+
+                forceSliderUpdate();
+                forceNoticeUpdate();
+
+                updateAuthUI();
+                if (pushState) history.pushState({ page: 'shop' }, 'Shop', '?page=shop');
+            } catch (error) { console.error("Error loading shop:", error); }
+        }
+
+        function startGlobalListeners() {
+            // 1. Permanent Shop Listener
+            if (!shopListener) {
+                shopListener = db.collection("shops").onSnapshot((querySnapshot) => {
+                    const shops = [];
+                    querySnapshot.forEach(doc => shops.push({ id: doc.id, ...doc.data() }));
+                    shops.sort((a, b) => (a.order || 99) - (b.order || 99));
+                    window.globalShops = shops;
+                    prefetchAllShopData(shops);
+
+                    const currentGrid = document.getElementById('shop-product-grid');
+                    if (currentGrid) renderShops(currentGrid, shops);
+
+                    // Reactive menu toggle for Spin
+                    const spinData = shops.find(s => s.pageUrl === 'spin' || s.id === 'spin');
+                    const spinNav = document.getElementById('nav-item-spin');
+                    const spinMobileNav = document.getElementById('mobile-nav-item-spin');
+                    if (spinData && spinData.active === false) {
+                        if (spinNav) spinNav.style.display = 'none';
+                        if (spinMobileNav) spinMobileNav.style.display = 'none';
+                    } else {
+                        if (spinNav) spinNav.style.display = 'inline-flex';
+                        if (spinMobileNav) spinMobileNav.style.display = 'flex';
+                    }
+                });
+            }
+
+            // 2. Permanent Slider Listener
+            if (!sliderListener) {
+                sliderListener = db.collection("web_settings").doc("slider").onSnapshot((doc) => {
+                    if (!doc.exists) return;
+                    window.globalSliderData = doc.data();
+                    forceSliderUpdate();
+                });
+            }
+
+            // 3. Permanent Notice Listener
+            if (!noticeListener) {
+                noticeListener = db.collection("web_settings").doc("notice").onSnapshot((doc) => {
+                    if (!doc.exists) return;
+                    window.globalNoticeData = doc.data();
+                    forceNoticeUpdate();
+                });
+            }
+
+            // 4. Permanent Payment Methods Listener
+            if (!paymentMethodsListener) {
+                paymentMethodsListener = db.collection("payment_methods").onSnapshot((querySnapshot) => {
+                    const methods = {};
+                    querySnapshot.forEach(doc => {
+                        methods[doc.id] = doc.data();
+                    });
+                    window.globalPaymentMethods = methods;
+                    applyPaymentMethodsVisibility();
+                });
+            }
+
+            // 5. Permanent Auth Settings Listener
+            if (!authSettingsListener) {
+                authSettingsListener = db.collection("web_settings").doc("auth").onSnapshot((doc) => {
+                    if (doc.exists) {
+                        window.globalAuthSettings = doc.data();
+
+                        // Reactive Update for Login/Register Pages
+                        if (window.location.href.includes('page=login') || window.location.href.includes('page=register')) {
+                             updateSocialAuthIcons();
+                        }
+                    }
+                });
+            }
+
+            // 6. Permanent AI Settings Listener
+            if (!aiSettingsListener) {
+                aiSettingsListener = db.collection("web_settings").doc("ai").onSnapshot((doc) => {
+                    if (doc.exists) {
+                        window.globalAiSettings = doc.data();
+                        updateAiBranding();
+                    }
+                });
+            }
+
+            // 7. Permanent General Settings Listener
+            if (!generalSettingsListener) {
+                generalSettingsListener = db.collection("web_settings").doc("general").onSnapshot((doc) => {
+                    if (doc.exists) {
+                        window.globalGeneralSettings = doc.data();
+                        applyGeneralSettings();
+                    }
+                });
+            }
+
+            // 8. Permanent Policies Listener
+            if (!policiesListener) {
+                policiesListener = db.collection("web_settings").doc("policies").onSnapshot((doc) => {
+                    if (doc.exists) {
+                        window.globalPolicies = doc.data();
+                        updatePolicyPages();
+                    }
+                });
+            }
+
+            // 9. Permanent Status Listener
+            if (!statusListener) {
+                statusListener = db.collection("web_settings").doc("status").onSnapshot((doc) => {
+                    if (doc.exists) {
+                        window.globalWebStatus = doc.data();
+                        applyWebStatus();
+                    }
+                });
+            }
+        }
+
+        function updateAiBranding() {
+            const settings = window.globalAiSettings;
+            if (!settings) return;
+
+            const isActive = settings.isActive !== false;
+
+            // 1. Handle Visibility (Floating Button & Footer Link)
+            const aiBtn = document.querySelector('.support-ai');
+            if (aiBtn) aiBtn.style.display = isActive ? 'flex' : 'none';
+
+            document.querySelectorAll('.footer-ai-icon-container').forEach(el => {
+                const parentLi = el.closest('li');
+                if (parentLi) parentLi.style.display = isActive ? 'block' : 'none';
+            });
+
+            // 2. Handle Icon (Image/Video)
+            const mediaUrl = settings.aiIconUrl;
+            if (mediaUrl && mediaUrl.includes('://')) {
+                const isVideo = mediaUrl.toLowerCase().match(/\.(mp4|webm|ogg|mov|avi)/) || mediaUrl.includes('youtube.com') || mediaUrl.includes('youtu.be');
+
+                const updateEl = (container) => {
+                    if (!container) return;
+
+                    if (isVideo) {
+                        let vBox = container.querySelector('.ai-video-box');
+                        if (!vBox) {
+                            vBox = document.createElement('div');
+                            vBox.className = 'ai-video-box';
+                            vBox.style.width = '100%';
+                            vBox.style.height = '100%';
+                            vBox.style.borderRadius = '50%';
+                            vBox.style.overflow = 'hidden';
+                            vBox.style.display = 'flex';
+                            vBox.style.alignItems = 'center';
+                            vBox.style.justifyContent = 'center';
+                            container.appendChild(vBox);
+                        }
+
+                        // Hide existing icon/img
+                        const oldImg = container.querySelector('img'); if (oldImg) oldImg.style.display = 'none';
+                        const oldIcon = container.querySelector('i'); if (oldIcon) oldIcon.style.display = 'none';
+
+                        if (mediaUrl.includes('youtube.com') || mediaUrl.includes('youtu.be')) {
+                             let vId = mediaUrl.includes('v=') ? mediaUrl.split('v=')[1].split('&')[0] : mediaUrl.split('youtu.be/')[1].split('?')[0];
+                             vBox.innerHTML = `<iframe src="https://www.youtube.com/embed/${vId}?autoplay=1&mute=1&loop=1&playlist=${vId}&controls=0" frameborder="0" style="width:100%; height:100%; pointer-events:none; transform: scale(2);"></iframe>`;
+                        } else {
+                             vBox.innerHTML = `<video src="${mediaUrl}" autoplay muted loop playsinline style="width:100%; height:100%; object-fit:cover;"></video>`;
+                        }
+                    } else {
+                        // Image mode
+                        const oldV = container.querySelector('.ai-video-box'); if (oldV) oldV.remove();
+
+                        let img = container.querySelector('img');
+                        if (!img) {
+                            img = document.createElement('img');
+                            img.style.width = '100%';
+                            img.style.height = '100%';
+                            img.style.objectFit = 'cover';
+                            img.style.borderRadius = '50%';
+                            container.appendChild(img);
+                        }
+                        img.src = mediaUrl;
+                        img.style.display = 'block';
+
+                        const oldIcon = container.querySelector('i'); if (oldIcon) oldIcon.style.display = 'none';
+                    }
+                };
+
+                // Apply to Floating Button, Modal Header, and Footer
+                ['.support-ai', '.ai-header-info', '.footer-ai-icon-container'].forEach(sel => {
+                    document.querySelectorAll(sel).forEach(el => updateEl(el));
+                });
+            }
+        }
+
+        function applyGeneralSettings() {
+            const gs = window.globalGeneralSettings;
+            if (!gs) return;
+
+            // 1. Update Website Name/Title
+            if (gs.siteName) {
+                document.title = gs.siteName + " - Topup Center";
+                document.querySelectorAll('.site-name, .mobile-site-name').forEach(el => el.innerText = gs.siteName);
+            }
+
+            // 2. Update Website Logo & Favicon (Support Image/Video)
+            if (gs.logoUrl && gs.logoUrl.includes('://')) {
+                const isVideo = gs.logoUrl.toLowerCase().match(/\.(mp4|webm|ogg|mov|avi)/) || gs.logoUrl.includes('youtube.com') || gs.logoUrl.includes('youtu.be');
+
+                // Update Favicon & Touch Icons
+                if (!isVideo) {
+                    const iconTypes = ['link[rel="icon"]', 'link[rel="shortcut icon"]', 'link[rel="apple-touch-icon"]'];
+                    iconTypes.forEach(selector => {
+                        let el = document.querySelector(selector);
+                        if (!el) {
+                            el = document.createElement('link');
+                            el.rel = selector.includes('apple') ? 'apple-touch-icon' : 'icon';
+                            document.head.appendChild(el);
+                        }
+                        el.href = gs.logoUrl;
+                    });
+                }
+
+                const updateLogoEl = (imgSelector) => {
+                    const img = document.querySelector(imgSelector);
+                    if (!img) return;
+
+                    if (isVideo) {
+                        img.style.display = 'none';
+                        let vBox = img.parentElement.querySelector('.dynamic-logo-video-box');
+                        if (!vBox) {
+                            vBox = document.createElement('div');
+                            vBox.className = 'dynamic-logo-video-box';
+                            vBox.style.height = '40px'; // Safe default
+                            vBox.style.width = 'auto';
+                            vBox.style.display = 'flex';
+                            vBox.style.alignItems = 'center';
+                            img.parentElement.insertBefore(vBox, img);
+                        }
+
+                        if (gs.logoUrl.includes('youtube.com') || gs.logoUrl.includes('youtu.be')) {
+                             let vId = gs.logoUrl.includes('v=') ? gs.logoUrl.split('v=')[1].split('&')[0] : gs.logoUrl.split('youtu.be/')[1].split('?')[0];
+                             vBox.innerHTML = `<iframe src="https://www.youtube.com/embed/${vId}?autoplay=1&mute=1&loop=1&playlist=${vId}&controls=0" frameborder="0" style="height:100%; width:100px; pointer-events:none; transform: scale(1.5);"></iframe>`;
+                        } else {
+                             vBox.innerHTML = `<video src="${gs.logoUrl}" autoplay muted loop playsinline style="height:100%; width:auto; object-fit:contain;"></video>`;
+                        }
+                    } else {
+                        img.src = gs.logoUrl;
+                        img.style.display = 'block';
+                        const oldV = img.parentElement.querySelector('.dynamic-logo-video-box');
+                        if (oldV) oldV.remove();
+                    }
+                };
+
+                // Apply to ALL logo classes across the site
+                ['.logo-img', '.mobile-logo-img', '.footer-logo-img', '.login-logo', '.register-logo'].forEach(cls => updateLogoEl(cls));
+            }
+
+            // 3. Update Website Name/Title everywhere
+            if (gs.siteName) {
+                document.title = gs.siteName + " - Topup Center";
+                document.querySelectorAll('.site-name, .mobile-site-name, .footer-logo-text').forEach(el => el.innerText = gs.siteName);
+            }
+
+            // 3. Update Social Links
+            if (gs.whatsapp) {
+                const waLink = gs.whatsapp.startsWith('http') ? gs.whatsapp : `https://wa.me/${gs.whatsapp.replace(/[^0-9]/g, '')}`;
+                document.querySelectorAll('.support-whatsapp, .footer-section a[href*="wa.me"]').forEach(el => el.href = waLink);
+            }
+            if (gs.telegram) {
+                document.querySelectorAll('.support-telegram, .footer-section a[href*="t.me"]').forEach(el => el.href = gs.telegram);
+            }
+            if (gs.fbPage) {
+                document.querySelectorAll('.footer-section a[href*="facebook.com"]').forEach(el => el.href = gs.fbPage);
+            }
+            if (gs.youtube) {
+                document.querySelectorAll('.footer-section a[href*="youtube.com"]').forEach(el => el.href = gs.youtube);
+            }
+            if (gs.tiktok) {
+                document.querySelectorAll('.footer-section a[href*="tiktok.com"]').forEach(el => el.href = gs.tiktok);
+            }
+            if (gs.instagram) {
+                document.querySelectorAll('.footer-section a[href*="instagram.com"]').forEach(el => el.href = gs.instagram);
+            }
+
+            // 5. Update Background Theme (Support Video/Image)
+            const updateBgMedia = (containerId, mediaUrl, defaultSrc) => {
+                const container = document.getElementById(containerId);
+                if (!container) return;
+
+                // যদি এডমিন থেকে কোনো ইউআরএল বা পাথ আসে তবে সেটা ইউজ করবে, নাহলে ডিফল্ট ওয়েবপি পাথ
+                const url = (mediaUrl && mediaUrl.trim() !== '') ? mediaUrl : defaultSrc;
+                const lowUrl = url.toLowerCase();
+                const isVideo = lowUrl.match(/\.(mp4|webm|ogg|mov|avi)/) || lowUrl.includes('youtube.com') || lowUrl.includes('youtu.be');
+
+                if (isVideo) {
+                    if (url.includes('youtube.com') || url.includes('youtu.be')) {
+                        let vId = url.includes('v=') ? url.split('v=')[1].split('&')[0] : url.split('youtu.be/')[1].split('?')[0];
+                        container.innerHTML = `<iframe src="https://www.youtube.com/embed/${vId}?autoplay=1&mute=1&loop=1&playlist=${vId}&controls=0&modestbranding=1" frameborder="0" style="position:absolute; top:50%; left:50%; transform:translate(-50%, -50%) scale(2); width:100%; height:100%; pointer-events:none; filter: blur(8px);"></iframe>`;
+                    } else {
+                        container.innerHTML = `<video src="${url}" autoplay muted loop playsinline style="position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); width:100%; height:100%; object-fit:cover; filter: blur(8px);"></video>`;
+                    }
+                } else {
+                    container.innerHTML = `<img class="bg-img" src="${url}" alt="background">`;
+                }
+            };
+
+            updateBgMedia('bg-desktop-container', gs.bgDesktopUrl, 'assets/images/b4uffeu_bg_16-9.webp');
+            updateBgMedia('bg-mobile-container', gs.bgMobileUrl, 'assets/images/b4uffeu_bg_9-16.webp');
+        }
+
+        let currentStatusLocalLang = 'auto'; // 'auto', 'bn', or 'en'
+
+        function toggleStatusLang() {
+            const st = window.globalWebStatus;
+            if (!st) return;
+
+            if (currentStatusLocalLang === 'auto') {
+                currentStatusLocalLang = currentLang === 'bn' ? 'en' : 'bn';
+            } else {
+                currentStatusLocalLang = currentStatusLocalLang === 'bn' ? 'en' : 'bn';
+            }
+            applyWebStatus();
+        }
+
+        async function applyWebStatus() {
+            const st = window.globalWebStatus;
+            if (!st) return;
+
+            let existingOverlay = document.getElementById('web-status-overlay');
+
+            if (st.isActive === true) {
+                if (!existingOverlay) {
+                    existingOverlay = document.createElement('div');
+                    existingOverlay.id = 'web-status-overlay';
+                    document.body.appendChild(existingOverlay);
+                    document.body.style.overflow = 'hidden';
+
+                    if (!document.querySelector('link[href="pages/web_status/css/web_status.css"]')) {
+                        const link = document.createElement('link');
+                        link.rel = 'stylesheet';
+                        link.href = 'pages/web_status/css/web_status.css';
+                        document.head.appendChild(link);
+                    }
+                }
+
+                try {
+                    const res = await fetch('pages/web_status/html/web_status.html');
+                    const html = await res.text();
+                    existingOverlay.innerHTML = html;
+
+                    const mode = (st.mode || 'maintenance').toLowerCase();
+                    const isClosed = mode === 'closed' || mode === 'shutdown';
+                    const mainColor = isClosed ? '#ff4d4d' : '#00d2ff';
+
+                    // Determine which language to show
+                    let activeLang = currentLang;
+                    if (currentStatusLocalLang !== 'auto') {
+                        activeLang = currentStatusLocalLang;
+                    }
+
+                    // Show/Hide Lang Switcher - ONLY IF BOTH EXIST
+                    const langSwitcher = document.getElementById('status-lang-switch-container');
+                    const langText = document.getElementById('status-lang-text');
+                    if (langSwitcher && st.reasonBn && st.reasonBn.trim() !== "" && st.reasonEn && st.reasonEn.trim() !== "") {
+                        langSwitcher.style.display = 'block';
+                        langText.innerText = activeLang === 'bn' ? 'Switch to English' : 'বাংলায় দেখুন';
+                    } else if (langSwitcher) {
+                        langSwitcher.style.display = 'none';
+                    }
+
+                    // Content Logic
+                    const reasonText = activeLang === 'bn' ? (st.reasonBn || st.reason) : (st.reasonEn || st.reason);
+
+                    const label = document.getElementById('status-label');
+                    const title = document.getElementById('status-title');
+                    const reason = document.getElementById('status-reason');
+                    const contactsContainer = document.getElementById('status-contacts');
+
+                    if (label) {
+                        label.innerText = isClosed ? (activeLang === 'bn' ? 'অফলাইন' : 'SYSTEM OFFLINE') : (activeLang === 'bn' ? 'লাইভ আপডেট' : 'SYSTEM LIVE UPDATE');
+                        label.style.color = mainColor;
+                    }
+                    if (title) {
+                        title.innerText = isClosed ? (activeLang === 'bn' ? 'ওয়েবসাইট বন্ধ আছে' : 'Website Closed') : (activeLang === 'bn' ? 'রক্ষণাবেক্ষণ চলছে' : 'Site Under Maintenance');
+                    }
+
+                    function parseStatusText(text) {
+                        if (!text) return "";
+                        let safe = text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+
+                        // Structure & Headings
+                        safe = safe.replace(/^# (.*$)/gim, '<h3>$1</h3>');
+                        safe = safe.replace(/^## (.*$)/gim, '<h4>$1</h4>');
+                        safe = safe.replace(/\[hr\]/g, '<div class="divider-line"></div>');
+                        safe = safe.replace(/\[br\]/g, '<br>');
+
+                        // Basic Formatting
+                        safe = safe.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+                        safe = safe.replace(/_(.*?)_/g, '<em>$1</em>');
+                        safe = safe.replace(/\[u\](.*?)\[\/u\]/g, '<u>$1</u>');
+                        safe = safe.replace(/\[s\](.*?)\[\/s\]/g, '<strike>$1</strike>');
+
+                        // Advanced Text Effects
+                        safe = safe.replace(/\[gradient\](.*?)\[\/gradient\]/g, '<span class="gradient-text">$1</span>');
+                        safe = safe.replace(/\[rainbow\](.*?)\[\/rainbow\]/g, '<span class="rainbow-text">$1</span>');
+                        safe = safe.replace(/\[shimmer\](.*?)\[\/shimmer\]/g, '<span class="shimmer-text">$1</span>');
+                        safe = safe.replace(/\[pulse\](.*?)\[\/pulse\]/g, '<span class="pulse-text">$1</span>');
+                        safe = safe.replace(/\[wave\](.*?)\[\/wave\]/g, '<span class="wave-text">$1</span>');
+
+                        // Colors & Glows
+                        safe = safe.replace(/\[glow=(.*?)\](.*?)\[\/glow\]/g, '<span class="glow-text" style="color:$1">$2</span>');
+                        safe = safe.replace(/\[neon=blue\](.*?)\[\/neon\]/g, '<span class="neon-blue">$1</span>');
+                        safe = safe.replace(/\[neon=red\](.*?)\[\/neon\]/g, '<span class="neon-red">$1</span>');
+                        safe = safe.replace(/\[color=(.*?)\](.*?)\[\/color\]/g, '<span style="color:$1">$2</span>');
+                        safe = safe.replace(/\[bg=(.*?)\](.*?)\[\/bg\]/g, '<span style="background:$1; padding:2px 6px; border-radius:4px;">$2</span>');
+
+                        // Sizing & Alignment
+                        safe = safe.replace(/\[xs\](.*?)\[\/xs\]/g, '<span class="txt-xs">$1</span>');
+                        safe = safe.replace(/\[sm\](.*?)\[\/sm\]/g, '<span class="txt-sm">$1</span>');
+                        safe = safe.replace(/\[lg\](.*?)\[\/lg\]/g, '<span class="txt-lg">$1</span>');
+                        safe = safe.replace(/\[xl\](.*?)\[\/xl\]/g, '<span class="txt-xl">$1</span>');
+                        safe = safe.replace(/\[xxl\](.*?)\[\/xxl\]/g, '<span class="txt-xxl">$1</span>');
+                        safe = safe.replace(/\[center\](.*?)\[\/center\]/g, '<span class="t-center">$1</span>');
+                        safe = safe.replace(/\[left\](.*?)\[\/left\]/g, '<span class="t-left">$1</span>');
+                        safe = safe.replace(/\[right\](.*?)\[\/right\]/g, '<span class="t-right">$1</span>');
+
+                        // Components
+                        safe = safe.replace(/\[box\](.*?)\[\/box\]/g, '<div class="glass-box">$1</div>');
+                        safe = safe.replace(/\[info\](.*?)\[\/info\]/g, '<div class="info-alert">$1</div>');
+                        safe = safe.replace(/\[warn\](.*?)\[\/warn\]/g, '<div class="warn-alert">$1</div>');
+                        safe = safe.replace(/\[error\](.*?)\[\/error\]/g, '<div class="error-alert">$1</div>');
+                        safe = safe.replace(/\[badge=(.*?)\](.*?)\[\/badge\]/g, '<span class="status-badge" style="background:$122; color:$1; border-color:$144">$2</span>');
+                        safe = safe.replace(/\[btn=(.*?)\](.*?)\[\/btn\]/g, '<a href="$1" target="_blank" class="custom-btn">$2</a>');
+                        safe = safe.replace(/` (.*?)`/g, '<code>$1</code>');
+
+                        // Lists
+                        safe = safe.replace(/^\* (.*$)/gim, '<li>$1</li>');
+                        safe = safe.replace(/(<li>.*<\/li>)/gms, '<ul>$1</ul>');
+
+                        return safe.replace(/\n/g, '<br>');
+                    }
+
+                    if (reason) reason.innerHTML = parseStatusText(reasonText);
+
+                    // UI elements
+                    const dot = document.getElementById('pulse-dot');
+                    const iconBox = document.getElementById('icon-box');
+                    const mainIcon = document.getElementById('main-icon');
+                    const footerBrand = document.getElementById('status-brand-text');
+
+                    if (dot) dot.style.background = mainColor;
+                    if (iconBox) {
+                        iconBox.style.color = mainColor;
+                        iconBox.style.boxShadow = `0 0 30px ${mainColor}15`;
+                    }
+                    if (mainIcon) mainIcon.className = `fas ${isClosed ? 'fa-ban' : 'fa-screwdriver-wrench'}`;
+                    if (footerBrand) footerBrand.innerText = 'B4U Foundry';
+
+                    if (contactsContainer && st.contacts) {
+                        let btnHtml = "";
+                        st.contacts.forEach(c => {
+                            let link = c.value;
+                            let icon = "fas fa-headset";
+                            if (c.method === 'WhatsApp') { link = `https://wa.me/${c.value.replace(/[^0-9]/g, '')}`; icon = "fab fa-whatsapp"; }
+                            else if (c.method === 'Telegram') { link = c.value.includes('://') ? c.value : `https://t.me/${c.value.replace('@', '')}`; icon = "fab fa-telegram-plane"; }
+                            else if (c.method === 'Facebook') { icon = "fab fa-facebook-f"; }
+                            else if (c.method === 'YouTube') { icon = "fab fa-youtube"; }
+                            else if (c.method === 'TikTok') { icon = "fab fa-tiktok"; }
+                            else if (c.method === 'Instagram') { icon = "fab fa-instagram"; }
+                            btnHtml += `<a href="${link}" target="_blank" class="status-btn"><i class="${icon}" style="color:${mainColor}aa"></i> ${c.method}</a>`;
+                        });
+                        contactsContainer.innerHTML = btnHtml;
+                    }
+                } catch (e) { console.error(e); }
+            } else {
+                if (existingOverlay) { existingOverlay.remove(); document.body.style.overflow = 'auto'; }
+            }
+        }
+
+        function updatePolicyPages() {
+            const policies = window.globalPolicies;
+            if (!policies) return;
+
+            // If user is currently viewing privacy policy, update it
+            const policyContent = document.querySelector('.policy-content');
+            if (policyContent) {
+                const urlParams = new URLSearchParams(window.location.search);
+                const page = urlParams.get('page');
+
+                let html = "";
+                if (page === 'privacy-policy') html = policies.privacyPolicy;
+                else if (page === 'terms-conditions') html = policies.termsConditions;
+                else if (page === 'refund-policy') html = policies.refundPolicy;
+
+                if (html && html.trim() !== "") {
+                    // Update only the inner content, keeping the footer button
+                    const footer = policyContent.querySelector('.policy-footer');
+                    policyContent.innerHTML = html;
+                    if (footer) policyContent.appendChild(footer);
+                }
+            }
+        }
+
+        function applyPaymentMethodsVisibility() {
+            const methods = window.globalPaymentMethods;
+            if (!methods) return;
+
+            // Update Profile Wallet Icon if dynamic link exists from Admin
+            const walletData = methods['wallet'];
+            if (walletData && walletData.image) {
+                document.querySelectorAll('.profile-wallet-icon').forEach(img => {
+                    if (walletData.image.includes('://')) {
+                        img.src = walletData.image;
+                    }
+                });
+            }
+
+            document.querySelectorAll('.payment-item').forEach(item => {
+                const type = item.getAttribute('data-payment');
+                const data = methods[type];
+                if (data) {
+                    if (data.isActive === false) {
+                        item.style.display = 'none';
+                    } else {
+                        item.style.display = 'flex';
+
+                        // Update Icon with Image or Video
+                        const mediaUrl = data.image || '';
+                        if (mediaUrl && mediaUrl.includes('://')) {
+                            const isVideo = mediaUrl.toLowerCase().match(/\.(mp4|webm|ogg|mov|avi)/) || mediaUrl.includes('youtube.com') || mediaUrl.includes('youtu.be');
+                            const img = item.querySelector('img');
+
+                            if (isVideo) {
+                                if (img) img.style.display = 'none';
+                                let videoContainer = item.querySelector('.payment-video-box');
+                                if (!videoContainer) {
+                                    videoContainer = document.createElement('div');
+                                    videoContainer.className = 'payment-video-box';
+                                    videoContainer.style.width = '60%';
+                                    videoContainer.style.height = '50%';
+                                    videoContainer.style.overflow = 'hidden';
+                                    videoContainer.style.borderRadius = '8px';
+                                    videoContainer.style.display = 'flex';
+                                    videoContainer.style.alignItems = 'center';
+                                    videoContainer.style.justifyContent = 'center';
+                                    item.insertBefore(videoContainer, item.firstChild);
+                                }
+
+                                if (mediaUrl.includes('youtube.com') || mediaUrl.includes('youtu.be')) {
+                                    let videoId = "";
+                                    if (mediaUrl.includes('v=')) videoId = mediaUrl.split('v=')[1].split('&')[0];
+                                    else if (mediaUrl.includes('youtu.be/')) videoId = mediaUrl.split('youtu.be/')[1].split('?')[0];
+                                    if (videoId) {
+                                        videoContainer.innerHTML = `<iframe src="https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&loop=1&playlist=${videoId}&controls=0" frameborder="0" style="width:100%; height:100%; pointer-events:none; object-fit: cover;"></iframe>`;
+                                    }
+                                } else {
+                                    videoContainer.innerHTML = `<video src="${mediaUrl}" autoplay muted loop playsinline style="width:100%; height:100%; object-fit:cover;"></video>`;
+                                }
+                            } else {
+                                if (img) {
+                                    img.src = mediaUrl;
+                                    img.style.display = 'block';
+                                }
+                                const vBox = item.querySelector('.payment-video-box');
+                                if (vBox) vBox.remove();
+                            }
+                        }
+
+                        const name = item.querySelector('.payment-name');
+                        if (name && data.name) {
+                            name.innerText = data.name;
+                        }
+                    }
+                }
+            });
+        }
+
+        function forceNoticeUpdate() {
+            const noticeBar = document.getElementById('global-notice-bar');
+            const wrapper = document.querySelector('.notice-text-wrapper');
+
+            if (noticeBar && wrapper && window.globalNoticeData) {
+                if (window.globalNoticeData.isActive && window.globalNoticeData.text) {
+                    noticeBar.style.display = 'flex';
+
+                    const duration = window.globalNoticeData.scrollSpeed || 20;
+
+                    // Clear and set initial text to measure
+                    wrapper.innerHTML = `<span>${window.globalNoticeData.text}</span>`;
+                    wrapper.classList.remove('scrolling-active');
+
+                    const span = wrapper.querySelector('span');
+                    span.style.animationDuration = duration + 's';
+
+                    setTimeout(() => {
+                        const isOverflowing = span.offsetWidth > wrapper.offsetWidth;
+                        if (isOverflowing) {
+                            // Add a second copy for seamless loop
+                            wrapper.innerHTML += `<span>${window.globalNoticeData.text}</span>`;
+                            wrapper.classList.add('scrolling-active');
+                            const allSpans = wrapper.querySelectorAll('span');
+                            allSpans.forEach(s => s.style.animationDuration = duration + 's');
+                        }
+                    }, 100);
+                } else {
+                    noticeBar.style.display = 'none';
+                }
+            }
+        }
+
+        let sliderInterval = null;
+
+        function getMediaHtml(item, index) {
+            if (!item) return "";
+            const url = (typeof item === 'object' && item.url) ? item.url : item;
+            const videoLink = (typeof item === 'object' && item.videoLink) ? item.videoLink : null;
+            if (!url) return "";
+
+            const lowUrl = url.toString().toLowerCase();
+            let mediaHtml = "";
+
+            if (lowUrl.includes('youtube.com') || lowUrl.includes('youtu.be')) {
+                let videoId = "";
+                if (url.includes('v=')) videoId = url.split('v=')[1].split('&')[0];
+                else if (url.includes('youtu.be/')) videoId = url.split('youtu.be/')[1].split('?')[0];
+                else if (url.includes('embed/')) videoId = url.split('embed/')[1].split('?')[0];
+                if (videoId) {
+                    mediaHtml = `<iframe src="https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&loop=1&playlist=${videoId}&controls=0&modestbranding=1" frameborder="0" allow="autoplay; encrypted-media" style="width:100%; height:100%; border:none; pointer-events:none;"></iframe>`;
+                }
+            } else if (lowUrl.includes('pinterest.com') || lowUrl.includes('pin.it')) {
+                let pinId = "";
+                if (url.includes('/pin/')) pinId = url.split('/pin/')[1].split('/')[0];
+                if (pinId) {
+                    mediaHtml = `<iframe src="https://assets.pinterest.com/ext/embed.html?id=${pinId}" height="100%" width="100%" frameborder="0" scrolling="no" style="width:100%; height:100%; border:none; overflow:hidden;"></iframe>`;
+                } else {
+                    mediaHtml = `<iframe src="${url}" style="width:100%; height:100%; border:none;"></iframe>`;
+                }
+            } else if (lowUrl.match(/\.(mp4|webm|ogg|mov|avi)/)) {
+                mediaHtml = `<video src="${url}" autoplay muted loop playsinline style="width:100%; height:100%; object-fit:cover;"></video>`;
+            } else if (lowUrl.includes('tiktok.com')) {
+                mediaHtml = `<iframe src="${url}" style="width:100%; height:100%; border:none;"></iframe>`;
+            } else {
+                mediaHtml = `<img src="${url}" alt="Slider ${index + 1}" style="width:100%; height:100%; object-fit:cover;" onerror="this.style.display='none'; this.parentElement.style.background='#111';">`;
+            }
+
+            if (videoLink) {
+                mediaHtml += `<a href="${videoLink}" target="_blank" class="slider-action-btn">View Details <i class="fas fa-arrow-right"></i></a>`;
+            }
+
+            return `<div class="slide" style="position: relative;">${mediaHtml}</div>`;
+        }
+
+        function initSliderLogic(slidesCount, duration) {
+            const track = document.getElementById('slider-track');
+            const dots = document.querySelectorAll('.dot');
+            if (!track || dots.length === 0) return;
+            if (sliderInterval) clearInterval(sliderInterval);
+            let currentSlide = 0;
+            function updateSlider(withTransition = true) {
+                track.style.transition = withTransition ? 'transform 0.6s cubic-bezier(0.4, 0, 0.2, 1)' : 'none';
+                const step = 100 / (slidesCount + 1);
+                track.style.transform = `translateX(-${currentSlide * step}%)`;
+                dots.forEach((dot, index) => dot.classList.toggle('active', index === (currentSlide % slidesCount)));
+            }
+            function nextSlide() {
+                currentSlide++;
+                updateSlider(true);
+                if (currentSlide === slidesCount) {
+                    setTimeout(() => {
+                        currentSlide = 0;
+                        updateSlider(false);
+                    }, 600);
+                }
+            }
+            sliderInterval = setInterval(nextSlide, duration);
+            dots.forEach((dot, index) => {
+                dot.onclick = () => {
+                    clearInterval(sliderInterval);
+                    currentSlide = index;
+                    updateSlider(true);
+                    sliderInterval = setInterval(nextSlide, duration);
+                };
+            });
+        }
+
+        function forceSliderUpdate() {
+            const sliderBox = document.querySelector('.shop-slider-container');
+            const track = document.getElementById('slider-track');
+            const dots = document.getElementById('slider-dots');
+            if (sliderBox && track && dots && window.globalSliderData) {
+                applySliderToUI(sliderBox, track, dots, window.globalSliderData);
+            }
+        }
+
+        function applySliderToUI(sliderBox, track, dotsContainer, data) {
+            if (!data || !data.images) {
+                sliderBox.style.display = 'none';
+                return;
+            }
+
+            const mediaItems = data.images;
+            const duration = data.duration || 5000;
+
+            const validMedia = mediaItems.filter(item => {
+                const url = (typeof item === 'object' && item.url) ? item.url : item;
+                return url && (url.toString().startsWith('http') || url.toString().includes('://'));
+            });
+
+            if (validMedia.length > 0) {
+                sliderBox.style.display = 'block';
+                let trackHtml = "";
+                let dotsHtml = "";
+
+                if (validMedia.length === 1) {
+                    track.style.width = "100%";
+                    track.innerHTML = getMediaHtml(validMedia[0], 0);
+                    const singleSlide = track.querySelector('.slide');
+                    if (singleSlide) singleSlide.style.width = "100%";
+                    dotsContainer.innerHTML = "";
+                    if (sliderInterval) clearInterval(sliderInterval);
+                    return;
+                }
+
+                const totalWithClone = validMedia.length + 1;
+                track.style.width = (totalWithClone * 100) + "%";
+
+                validMedia.forEach((item, index) => {
+                    trackHtml += getMediaHtml(item, index);
+                    dotsHtml += `<span class="dot ${index === 0 ? 'active' : ''}"></span>`;
+                });
+
+                trackHtml += getMediaHtml(validMedia[0], 0);
+                track.innerHTML = trackHtml;
+                dotsContainer.innerHTML = dotsHtml;
+
+                const slides = track.querySelectorAll('.slide');
+                const slideWidthPercent = (100 / totalWithClone).toFixed(5);
+                slides.forEach(s => s.style.width = slideWidthPercent + "%");
+
+                initSliderLogic(validMedia.length, duration);
+            } else {
+                sliderBox.style.display = 'none';
+            }
+        }
+
+        function renderShops(grid, shops) {
+            grid.innerHTML = '';
+
+            // Filter out Spin & Win from main grid (it has its own nav) and only show active ones
+            const activeShops = shops.filter(s => s.active !== false && s.id !== 'spin' && s.pageUrl !== 'spin');
+
+            if (activeShops.length === 0) {
+                grid.innerHTML = `<div style="grid-column: 1/-1; color: rgba(255,255,255,0.3); padding: 40px;">No active shops available.</div>`;
+                return;
+            }
+
+            activeShops.forEach((data) => {
+                const shopId = data.id;
+                // Priority: shopIcon -> image -> imageUrl
+                const rawImage = data.shopIcon || data.image || data.imageUrl || '';
+                const mediaUrl = rawImage.includes('://') ? rawImage : ''; // Removed local assets fallback
+                const isVideo = mediaUrl && (mediaUrl.toLowerCase().match(/\.(mp4|webm|ogg|mov|avi)/) || mediaUrl.includes('youtube.com') || mediaUrl.includes('youtu.be'));
+
+                let mediaHtml = "";
+                if (mediaUrl) {
+                    if (isVideo) {
+                        if (mediaUrl.includes('youtube.com') || mediaUrl.includes('youtu.be')) {
+                             let videoId = "";
+                             if (mediaUrl.includes('v=')) videoId = mediaUrl.split('v=')[1].split('&')[0];
+                             else if (mediaUrl.includes('youtu.be/')) videoId = mediaUrl.split('youtu.be/')[1].split('?')[0];
+                             if (videoId) {
+                                 mediaHtml = `<iframe src="https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&loop=1&playlist=${videoId}&controls=0" frameborder="0" style="width:100%; height:100%; pointer-events:none;"></iframe>`;
+                             }
+                        } else {
+                            mediaHtml = `<video src="${mediaUrl}" autoplay muted loop playsinline style="width:100%; height:100%; object-fit:cover;"></video>`;
+                        }
+                    } else {
+                        mediaHtml = `<img src="${mediaUrl}" alt="${data.name}" style="width:100%; height:100%; object-fit:cover;">`;
+                    }
+                } else {
+                    // Fallback to generic icon if no media link exists
+                    mediaHtml = `<i class="fas fa-store" style="font-size: 50px; color: rgba(255,255,255,0.1);"></i>`;
+                }
+
+                const card = document.createElement('div');
+                card.className = 'product-card';
+                card.innerHTML = `
+                    <div class="product-image">
+                        ${mediaHtml}
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-name">${data.name || 'Shop'}</h3>
+                        <button class="buy-btn" onclick="handleShopClick('${shopId}', '${data.name}', '${data.pageUrl}')">
+                            <i class="fas fa-cart-shopping btn-icon"></i><span>Order Now</span>
+                        </button>
+                    </div>`;
+                grid.appendChild(card);
+            });
+        }
+
+        function handleShopClick(shopId, name, pageUrl) {
+            // Store shop info for generic page usage
+            const shop = window.globalShops ? window.globalShops.find(s => s.id === shopId) : null;
+            window.currentShopInfo = shop || { id: shopId, name: name };
+
+            if (pageUrl === 'whatsapp' || name === "ID Pass Airdrop") {
+                window.open("https://wa.me/8801768161025", "_blank");
+            } else if (pageUrl === 'spin') {
+                loadSpin();
+            } else if (pageUrl && pageUrl !== 'null' && pageUrl !== 'undefined' && pageUrl.trim() !== '') {
+                // If it's a full URL (external), open it
+                if (pageUrl.startsWith('http')) {
+                    window.open(pageUrl, "_blank");
+                } else {
+                    // Internal specific page
+                    loadProductPage(pageUrl, true, shopId);
+                }
+            } else {
+                // Generic product page for newly created shops
+                loadProductPage('pages/shop/html/generic_product.html', true, shopId);
+            }
+        }
+
+
+
+        async function loadSpin(pushState = true) {
+            if (sessionStorage.getItem('userRestriction')) { handleRestrictedAccess(); return; }
+            try {
+                updateActiveStates('Spin');
+
+                const fetchSpinData = async () => {
+                    if (window.globalShops && window.globalShops.length > 0) {
+                        return window.globalShops.find(s => s.pageUrl === 'spin' || s.id === 'spin');
+                    }
+                    // Fallback to direct fetch if globalShops not ready
+                    const doc = await db.collection("shops").doc("spin").get();
+                    return doc.exists ? { id: doc.id, ...doc.data() } : null;
+                };
+
+                const spinData = await fetchSpinData();
+                if (spinData && spinData.active === false) {
+                    showToast("Spin & Win is temporarily disabled.", "স্পিন ও উইন সাময়িকভাবে বন্ধ আছে।", "fa-lock");
+                    loadShop();
+                    return;
+                }
+
+                const res = await fetch('pages/spin/html/spin.html');
+                const html = await res.text();
+                document.getElementById('main-content').innerHTML = html;
+                window.scrollTo(0, 0);
+
+                // Ensure container exists before updating
+                const imgBox = document.getElementById('spin-media-container');
+                if (imgBox && spinData) {
+                    // Priority: bannerImage -> image -> imageUrl
+                    const rawSpinImage = spinData.bannerImage || spinData.image || spinData.imageUrl || '';
+                    const mediaUrl = rawSpinImage.includes('://') ? rawSpinImage : (spinData.imageUrl || spinData.image || '');
+
+                    if (mediaUrl) {
+                        const isVideo = mediaUrl.toLowerCase().match(/\.(mp4|webm|ogg|mov|avi)/) || mediaUrl.includes('youtube.com') || mediaUrl.includes('youtu.be');
+
+                        if (isVideo) {
+                            let mediaHtml = "";
+                            if (mediaUrl.includes('youtube.com') || mediaUrl.includes('youtu.be')) {
+                                let videoId = "";
+                                if (mediaUrl.includes('v=')) videoId = mediaUrl.split('v=')[1].split('&')[0];
+                                else if (mediaUrl.includes('youtu.be/')) videoId = mediaUrl.split('youtu.be/')[1].split('?')[0];
+                                if (videoId) {
+                                    mediaHtml = `<iframe src="https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&loop=1&playlist=${videoId}&controls=0" frameborder="0" style="width:100%; height:100%; pointer-events:none;"></iframe>`;
+                                }
+                            } else {
+                                mediaHtml = `<video src="${mediaUrl}" autoplay muted loop playsinline style="width:100%; height:100%; object-fit:cover;"></video>`;
+                            }
+                            imgBox.innerHTML = mediaHtml;
+                            imgBox.style.height = '200px';
+                            imgBox.style.overflow = 'hidden';
+                        } else {
+                            imgBox.innerHTML = `<img src="${mediaUrl}" alt="Spins" style="width:100%; height:100%; object-fit:contain;">`;
+                        }
+                    }
+                }
+
+                const spinBtns = document.querySelectorAll('.buy-btn');
+                spinBtns.forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const productName = this.parentElement.querySelector('.product-name').innerText.trim();
+                        if (productName === 'Spins') loadSpinPackage('pages/spin/spins/html/spins.html');
+                    });
+                });
+                if (pushState) history.pushState({ page: 'spin' }, 'Spin', '?page=spin');
+                if (!document.querySelector('link[href="pages/spin/css/spin.css"]')) {
+                    const link = document.createElement('link'); link.rel = 'stylesheet'; link.href = 'pages/spin/css/spin.css'; document.head.appendChild(link);
+                }
+            } catch (error) { console.error("Error loading spin:", error); }
+        }
+
+        async function loadMyOrder(pushState = true) {
+            // Show a simple loader first while checking auth state on reload
+            updateActiveStates('My Order');
+            document.getElementById('main-content').innerHTML = `
+                <div class="my-order-container" style="text-align:center; padding:50px; color:white;">
+                    <i class="fas fa-spinner fa-spin" style="font-size:30px; color:#00d2ff;"></i>
+                    <p style="margin-top:15px; opacity:0.6;">Checking login status...</p>
+                </div>`;
+
+            // Wait for Firebase to determine auth state (important for reloads)
+            const user = await new Promise(resolve => {
+                const unsubscribe = auth.onAuthStateChanged(u => {
+                    unsubscribe();
+                    resolve(u);
+                });
+            });
+
+            if (!user) {
+                showToast("Please login to view your orders.", "অর্ডার দেখতে আগে লগইন করুন।", "fa-user-lock");
+                loadLoginPage();
+                return;
+            }
+
+            try {
+                const res = await fetch('pages/my_order/html/my_order.html');
+                if (!res.ok) throw new Error("My Order page not found");
+                const html = await res.text();
+                document.getElementById('main-content').innerHTML = html;
+                window.scrollTo(0, 0);
+
+                if (pushState) history.pushState({ page: 'my_order' }, 'My Order', '?page=my-order');
+
+                if (!document.querySelector('link[href="pages/my_order/css/my_order.css"]')) {
+                    const link = document.createElement('link'); link.rel = 'stylesheet'; link.href = 'pages/my_order/css/my_order.css'; document.head.appendChild(link);
+                }
+
+                safeLoadScript('pages/my_order/js/my_order.js', () => {
+                    if(typeof initMyOrderPage === 'function') {
+                        initMyOrderPage(user);
+                    }
+                });
+            } catch (error) {
+                console.error("Error loading my order:", error);
+                showToast("Failed to load orders page.", "অর্ডার পেজ লোড করতে ব্যর্থ হয়েছে।", "fa-circle-xmark");
+            }
+        }
+
+        async function loadOffers(pushState = true) {
+            try {
+                updateActiveStates('Offers');
+                const res = await fetch('pages/offers/html/offers.html');
+                if (!res.ok) throw new Error("Offers page not found");
+                const html = await res.text();
+                document.getElementById('main-content').innerHTML = html;
+                window.scrollTo(0, 0);
+
+                if (pushState) history.pushState({ page: 'offers' }, 'Special Offers', '?page=offers');
+
+                if (!document.querySelector('link[href="pages/offers/css/offers.css"]')) {
+                    const link = document.createElement('link'); link.rel = 'stylesheet'; link.href = 'pages/offers/css/offers.css'; document.head.appendChild(link);
+                }
+
+                safeLoadScript('pages/offers/js/offers.js', () => {
+                    if(typeof initOffersPage === 'function') initOffersPage();
+                });
+            } catch (error) {
+                console.error("Error loading offers:", error);
+                showToast("Failed to load offers page.", "অফার পেজ লোড করতে ব্যর্থ হয়েছে।", "fa-circle-xmark");
+            }
+        }
+
+        async function loadSpinPackage(url, pushState = true) {
+            try {
+                const res = await fetch(url); const html = await res.text();
+                document.getElementById('main-content').innerHTML = html; window.scrollTo(0, 0);
+                let cssPath = url.includes('spins.html') ? 'pages/spin/spins/css/spins.css' : 'pages/spin/Low Prize 25/css/low_prize_25.css';
+                let jsPath = url.includes('spins.html') ? 'pages/spin/spins/js/spins.js' : 'pages/spin/Low Prize 25/js/low_prize_25.js';
+                if (!document.querySelector(`link[href="${cssPath}"]`)) { const link = document.createElement('link'); link.rel = 'stylesheet'; link.href = cssPath; document.head.appendChild(link); }
+                safeLoadScript(jsPath);
+                if (pushState) {
+                    const parts = url.split('/'); const pkg = parts[parts.length - 3].toLowerCase();
+                    history.pushState({ page: 'spin_package', url: url }, 'Spin Package', `?page=spin&package=${pkg}`);
+                }
+            } catch (error) { console.error("Error loading spin package:", error); }
+        }
+
+        function updatePolicyPages(pageOverride = null) {
+            const policies = window.globalPolicies;
+            if (!policies) return;
+
+            const policyContent = document.getElementById('dynamic-policy-content');
+            const policyHeader = document.getElementById('dynamic-policy-header');
+
+            if (policyContent) {
+                const urlParams = new URLSearchParams(window.location.search);
+                const page = pageOverride || urlParams.get('page');
+
+                let sections = [];
+                if (page === 'privacy-policy' || page === 'privacy_policy') sections = policies.privacySections || [];
+                else if (page === 'terms-conditions' || page === 'terms_conditions') sections = policies.termsSections || [];
+                else if (page === 'refund-policy' || page === 'refund_policy') sections = policies.refundSections || [];
+
+                if (sections && sections.length > 0) {
+                    let htmlResult = "";
+                    sections.forEach(sec => {
+                        const content = (sec.body || '').replace(/\n/g, '<br>');
+
+                        htmlResult += `
+                        <section class="policy-section" style="margin-bottom: 35px; background: rgba(255,255,255,0.02); padding: 25px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.05); transition: 0.3s; box-shadow: 0 10px 30px rgba(0,0,0,0.1);">
+                            <h2 style="color: #00D2FF; font-size: 22px; margin-bottom: 18px; display: flex; align-items: center; gap: 12px; font-weight: 800; letter-spacing: -0.5px;">
+                                <i class="${sec.icon || 'fas fa-info-circle'}" style="font-size: 18px; opacity: 0.8;"></i>
+                                ${sec.title || 'Untitled'}
+                            </h2>
+                            <div class="policy-body-content" style="color: rgba(255,255,255,0.85); line-height: 1.8; font-size: 15px; font-weight: 400; text-align: justify; word-break: break-word;">
+                                ${content}
+                            </div>
+                        </section>`;
+                    });
+
+                    if (policyHeader) policyHeader.style.display = 'block';
+
+                    const footer = document.getElementById('dynamic-policy-footer');
+                    policyContent.innerHTML = htmlResult;
+                    if (footer) policyContent.appendChild(footer);
+                } else {
+                    policyContent.innerHTML = '<div style="text-align:center; padding:100px 20px; color:rgba(255,255,255,0.2);"><i class="fas fa-file-invoice" style="font-size:40px; display:block; margin-bottom:15px;"></i>No content published yet.</div>';
+                }
+            }
+        }
+
+        async function loadPrivacyPolicy(pushState = true) {
+            try {
+                const res = await fetch('pages/privacy_policy/html/privacy_policy.html');
+                const html = await res.text();
+                document.getElementById('main-content').innerHTML = html;
+                window.scrollTo(0, 0);
+
+                if (pushState) history.pushState({ page: 'privacy_policy' }, 'Privacy Policy', '?page=privacy-policy');
+                updatePolicyPages('privacy-policy');
+
+                if (!document.querySelector('link[href="pages/privacy_policy/css/privacy_policy.css"]')) {
+                    const link = document.createElement('link'); link.rel = 'stylesheet'; link.href = 'pages/privacy_policy/css/privacy_policy.css'; document.head.appendChild(link);
+                }
+                safeLoadScript('pages/privacy_policy/js/privacy_policy.js');
+            } catch (error) { console.error("Error loading privacy policy:", error); }
+        }
+
+        async function loadTermsConditions(pushState = true) {
+            try {
+                const res = await fetch('pages/privacy_policy/html/privacy_policy.html');
+                const html = await res.text();
+                document.getElementById('main-content').innerHTML = html;
+
+                const header = document.querySelector('.policy-header');
+                if (header) {
+                    header.querySelector('h1').innerText = "Terms & Conditions";
+                    header.querySelector('i').className = "fas fa-file-contract";
+                    header.querySelector('p').innerText = "Please read our terms carefully.";
+                }
+
+                window.scrollTo(0, 0);
+                if (pushState) history.pushState({ page: 'terms_conditions' }, 'Terms & Conditions', '?page=terms-conditions');
+                updatePolicyPages('terms-conditions');
+
+                if (!document.querySelector('link[href="pages/privacy_policy/css/privacy_policy.css"]')) {
+                    const link = document.createElement('link'); link.rel = 'stylesheet'; link.href = 'pages/privacy_policy/css/privacy_policy.css'; document.head.appendChild(link);
+                }
+            } catch (error) { console.error("Error loading terms:", error); }
+        }
+
+        async function loadRefundPolicy(pushState = true) {
+            try {
+                const res = await fetch('pages/privacy_policy/html/privacy_policy.html');
+                const html = await res.text();
+                document.getElementById('main-content').innerHTML = html;
+
+                const header = document.querySelector('.policy-header');
+                if (header) {
+                    header.querySelector('h1').innerText = "Refund Policy";
+                    header.querySelector('i').className = "fas fa-rotate-left";
+                    header.querySelector('p').innerText = "Our commitment to your satisfaction.";
+                }
+
+                window.scrollTo(0, 0);
+                if (pushState) history.pushState({ page: 'refund_policy' }, 'Refund Policy', '?page=refund-policy');
+                updatePolicyPages('refund-policy');
+
+                if (!document.querySelector('link[href="pages/privacy_policy/css/privacy_policy.css"]')) {
+                    const link = document.createElement('link'); link.rel = 'stylesheet'; link.href = 'pages/privacy_policy/css/privacy_policy.css'; document.head.appendChild(link);
+                }
+            } catch (error) { console.error("Error loading refund policy:", error); }
+        }
+
+        async function loadProfile(pushState = true) {
+            if (sessionStorage.getItem('userRestriction')) { handleRestrictedAccess(); return; }
+            try {
+                updateActiveStates('Profile');
+                const res = await fetch('pages/profile/html/profile.html');
+                const html = await res.text();
+                document.getElementById('main-content').innerHTML = html;
+                window.scrollTo(0, 0);
+                if (pushState) history.pushState({ page: 'profile' }, 'Profile', '?page=profile');
+                if (!document.querySelector('link[href="pages/profile/css/profile.css"]')) {
+                    const link = document.createElement('link'); link.rel = 'stylesheet'; link.href = 'pages/profile/css/profile.css'; document.head.appendChild(link);
+                }
+                safeLoadScript('pages/profile/js/profile.js', () => { if(typeof initProfile === 'function') initProfile(); });
+            } catch (error) { console.error("Error loading profile:", error); }
+        }
+
+        window.loadBannedPage = async function(pushState = true) {
+            try {
+                updateActiveStates('');
+                const res = await fetch('pages/banned/html/banned.html');
+                const html = await res.text();
+                document.getElementById('main-content').innerHTML = html;
+                window.scrollTo(0, 0);
+                if (pushState) history.pushState({ page: 'banned' }, 'Account Suspended', '?page=banned');
+                if (!document.querySelector('link[href="pages/banned/css/banned.css"]')) {
+                    const link = document.createElement('link'); link.rel = 'stylesheet'; link.href = 'pages/banned/css/banned.css'; document.head.appendChild(link);
+                }
+                safeLoadScript('pages/banned/js/banned.js', () => { if(typeof initBannedPage === 'function') initBannedPage(); });
+            } catch (error) { console.error("Error loading banned page:", error); }
+        };
+
+        window.loadDeletedPage = async function(pushState = true) {
+            try {
+                updateActiveStates('');
+                const res = await fetch('pages/deleted/html/deleted.html');
+                const html = await res.text();
+                document.getElementById('main-content').innerHTML = html;
+                window.scrollTo(0, 0);
+                if (pushState) history.pushState({ page: 'deleted' }, 'Account Banned', '?page=deleted');
+                if (!document.querySelector('link[href="pages/deleted/css/deleted.css"]')) {
+                    const link = document.createElement('link'); link.rel = 'stylesheet'; link.href = 'pages/deleted/css/deleted.css'; document.head.appendChild(link);
+                }
+                safeLoadScript('pages/deleted/js/deleted.js', () => { if(typeof initDeletedPage === 'function') initDeletedPage(); });
+            } catch (error) { console.error("Error loading deleted page:", error); }
+        };
+
+        window.loadBannedAppeal = async function(pushState = true) {
+            try {
+                const res = await fetch('pages/banned/html/appeal.html');
+                const html = await res.text();
+                document.getElementById('main-content').innerHTML = html;
+                window.scrollTo(0, 0);
+                if (pushState) history.pushState({ page: 'banned_appeal' }, 'Submit Appeal', '?page=banned_appeal');
+
+                if (!document.querySelector('link[href="pages/banned/css/appeal.css"]')) {
+                    const link = document.createElement('link'); link.rel = 'stylesheet'; link.href = 'pages/banned/css/appeal.css'; document.head.appendChild(link);
+                }
+                safeLoadScript('pages/banned/js/appeal.js', () => { if(typeof initAppealPage === 'function') initAppealPage(); });
+            } catch (error) { console.error("Error loading appeal page:", error); }
+        };
+
+
+        async function loadProfileSubPage(url, pushState = true) {
+            try {
+                updateActiveStates('Profile');
+                const res = await fetch(url); const html = await res.text();
+                document.getElementById('main-content').innerHTML = html; window.scrollTo(0, 0);
+                applyPaymentMethodsVisibility();
+                let cssPath = '', jsPath = '';
+                if (url.includes('topup_history.html')) { cssPath = 'pages/profile/topup_history/css/topup_history.css'; jsPath = 'pages/profile/topup_history/js/topup_history.js'; }
+                else if (url.includes('add_funds.html')) { cssPath = 'pages/profile/add_funds/css/add_funds.css'; jsPath = 'pages/profile/add_funds/js/add_funds.js'; }
+                else if (url.includes('inventory_withdraw.html')) { cssPath = 'pages/profile/inventory_withdraw/css/inventory_withdraw.css'; jsPath = 'pages/profile/inventory_withdraw/js/inventory_withdraw.js'; }
+                else if (url.includes('account.html')) { cssPath = 'pages/profile/account/css/account.css'; jsPath = 'pages/profile/account/js/account.js'; }
+                else if (url.includes('add_money_history.html')) { cssPath = 'pages/profile/topup_history/css/topup_history.css'; jsPath = 'pages/profile/add_funds/js/add_money_history.js'; }
+                if (!document.querySelector(`link[href="${cssPath}"]`)) { const link = document.createElement('link'); link.rel = 'stylesheet'; link.href = cssPath; document.head.appendChild(link); }
+                safeLoadScript(jsPath);
+                if (pushState) { const sub = url.split('/').slice(-1)[0].split('.')[0]; history.pushState({ page: 'profile_sub', url: url }, 'Profile Detail', `?page=profile&sub=${sub}`); }
+            } catch (error) { console.error("Error loading profile subpage:", error); }
+        }
+
+
+        let productListener = null;
+        const templateCache = {};
+        const globalShopData = {}; // Instant Data Store
+
+        // --- Extreme Performance: Prefetch Everything ---
+        async function prefetchAllShopData(shops) {
+            console.log("🚀 Pre-fetching all shop data for instant access...");
+            shops.forEach(async (shop) => {
+                const shopId = shop.id;
+
+                // 1. Prefetch HTML Template
+                if (shop.pageUrl && shop.pageUrl !== 'whatsapp' && !templateCache[shop.pageUrl]) {
+                    fetch(shop.pageUrl).then(r => r.text()).then(html => templateCache[shop.pageUrl] = html);
+                }
+
+                // 2. Persistent Background Listeners for all shops
+                db.collection("shops").doc(shopId).collection("items").onSnapshot(snap => {
+                    const items = [];
+                    snap.forEach(d => items.push({id: d.id, ...d.data()}));
+                    globalShopData[shopId] = items;
+
+                    // If user is CURRENTLY viewing this shop, update UI instantly
+                    if (window.currentProductPage && window.currentProductPage.shopId === shopId) {
+                        const grid = document.getElementById('recharge-grid');
+                        if (grid) renderItems(grid, items, window.currentProductPage.url);
+                    }
+                });
+            });
+        }
+
+        async function loadProductPage(url, pushState = true, shopId = null) {
+            if (sessionStorage.getItem('userRestriction')) { handleRestrictedAccess(); return; }
+
+            // Check if shop is active before loading
+            if (shopId && window.globalShops) {
+                const shop = window.globalShops.find(s => s.id === shopId);
+                if (shop && shop.active === false) {
+                    showToast("This shop is temporarily closed.", "এই শপটি সাময়িকভাবে বন্ধ রয়েছে।", "fa-lock");
+                    return;
+                }
+            }
+
+            try {
+                window.currentProductPage = { url: url, shopId: shopId };
+                updateActiveStates('Shop');
+
+                // --- 1. Instant HTML from Cache ---
+                let html = templateCache[url];
+                if (!html) {
+                    const res = await fetch(url);
+                    if (!res.ok) throw new Error("Page not found");
+                    html = await res.text();
+                    templateCache[url] = html;
+                }
+
+                document.getElementById('main-content').innerHTML = html;
+                window.scrollTo(0, 0);
+                updateAuthUI();
+                applyPaymentMethodsVisibility();
+
+                // --- NEW: Update Shop Header Image/Title ---
+                const shop = window.globalShops ? window.globalShops.find(s => s.id === shopId) : null;
+                if (shop) {
+                    const headerTitle = document.querySelector('.product-header-title');
+                    const headerImg = document.querySelector('.product-header-img');
+                    if (headerTitle) headerTitle.innerText = shop.name;
+                    if (headerImg) {
+                        const mediaUrl = shop.shopIcon || shop.image || shop.imageUrl || '';
+                        if (mediaUrl && mediaUrl.includes('://')) {
+                            headerImg.src = mediaUrl;
+                            headerImg.style.display = 'block';
+                            // Hide fallback icon if any
+                            const fallbackIcon = document.querySelector('.generic-shop-icon');
+                            if (fallbackIcon) fallbackIcon.style.display = 'none';
+                        } else {
+                            headerImg.style.display = 'none';
+                            const fallbackIcon = document.querySelector('.generic-shop-icon');
+                            if (fallbackIcon) fallbackIcon.style.display = 'block';
+                        }
+                    }
+                }
+
+                const grid = document.getElementById('recharge-grid');
+                if (grid && shopId) {
+                    // --- 2. Instant Data from Memory (Zero Delay) ---
+                    if (globalShopData[shopId]) {
+                        renderItems(grid, globalShopData[shopId], url);
+                    } else {
+                        // If not pre-fetched yet, show skeleton
+                        renderSkeleton(grid);
+                    }
+                }
+
+                let scriptPath = '';
+                if (url.includes('uid_topup_bd')) scriptPath = 'pages/shop/UID Topup BD/js/uid_topup_bd.js';
+                else if (url.includes('weekly_monthly')) scriptPath = 'pages/shop/Weekly Monthly/js/weekly_monthly.js';
+                else if (url.includes('weekly_lite')) scriptPath = 'pages/shop/Weekly Lite/js/weekly_lite.js';
+                else if (url.includes('level_up_pass')) scriptPath = 'pages/shop/Level Up Pass/js/level_up_pass.js';
+                else if (url.includes('uid_evo_access')) scriptPath = 'pages/shop/UID Evo Access/js/uid_evo_access.js';
+                else if (url.includes('generic_product')) scriptPath = 'pages/shop/js/generic_product.js';
+
+                if (scriptPath) {
+                    safeLoadScript(scriptPath, () => {
+                        if (url.includes('generic_product') && typeof initGenericProduct === 'function') initGenericProduct();
+                        else callInitFunction(url);
+                    });
+                }
+
+                if (pushState) {
+                    let page = 'product';
+                    if (url.includes('uid_topup_bd')) page = 'uidtopup';
+                    else if (url.includes('weekly_monthly')) page = 'weeklymonthly';
+                    else if (url.includes('weekly_lite')) page = 'weeklylite';
+                    else if (url.includes('level_up_pass')) page = 'leveluppass';
+                    else if (url.includes('uid_evo_access')) page = 'uidevoaccess';
+
+                    history.pushState({ page: 'product', url: url, shopId: shopId }, 'Product', '?page=' + page + (shopId ? '&shopId=' + shopId : ''));
+                }
+            } catch (error) {
+                console.error("Error loading product page:", error);
+                showToast("Failed to load shop page.", "শপ পেজ লোড করতে ব্যর্থ হয়েছে।", "fa-circle-xmark");
+            }
+        }
+
+        function renderSkeleton(grid) {
+            grid.innerHTML = Array(6).fill(0).map(() => `
+                <div class="recharge-item skeleton" style="height: 60px; pointer-events: none; border: none; margin-bottom: 10px;"></div>
+            `).join('');
+        }
+
+        function renderItems(grid, items, url) {
+            items.sort((a, b) => (a.price || 0) - (b.price || 0));
+            grid.innerHTML = '';
+            if (items.length === 0) {
+                grid.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: rgba(255,255,255,0.5); padding: 20px;">No items available yet.</p>';
+                return;
+            }
+
+            items.forEach((data) => {
+                const isStockOut = data.active === false;
+                const item = document.createElement('div');
+                item.className = `recharge-item ${isStockOut ? 'stock-out' : ''}`;
+
+                let priceHtml = `<span class="price-amount">${data.price || 0} ৳</span>`;
+                if (data.originalPrice && data.originalPrice != data.price) {
+                    const isDiscount = data.originalPrice > data.price;
+                    const priceClass = isDiscount ? 'discounted' : 'increased';
+                    const arrowIcon = isDiscount ? '<i class="fas fa-arrow-down price-indicator down"></i>' : '<i class="fas fa-arrow-up price-indicator up"></i>';
+                    priceHtml = `
+                        <div class="price-wrapper">
+                            <span class="original-price">${data.originalPrice} ৳</span>
+                            <span class="price-amount ${priceClass}">${data.price || 0} ৳ ${arrowIcon}</span>
+                        </div>`;
+                }
+
+                item.innerHTML = `
+                    <div class="recharge-details">
+                        <span class="diamond-amount">${data.name || 'Unknown Item'}</span>
+                        ${priceHtml}
+                    </div>`;
+                grid.appendChild(item);
+            });
+            callInitFunction(url);
+        }
+
+        function callInitFunction(url) {
+            if (url.includes('uid_topup_bd') && typeof initUIDTopup === 'function') initUIDTopup();
+            else if (url.includes('weekly_monthly') && typeof initWeeklyMonthly === 'function') initWeeklyMonthly();
+            else if (url.includes('weekly_lite') && typeof initWeeklyLite === 'function') initWeeklyLite();
+            else if (url.includes('level_up_pass') && typeof initLevelUpPass === 'function') initLevelUpPass();
+            else if (url.includes('uid_evo_access') && typeof initUIDEvoAccess === 'function') initUIDEvoAccess();
+        }
+
+        async function loadPaymentPage(url, amount, pushState = true) {
+            if (sessionStorage.getItem('userRestriction')) { handleRestrictedAccess(); return; }
+            try {
+                // Inject redirect info
+                const pending = sessionStorage.getItem('pending_order');
+                if (pending && window.currentProductPage) {
+                    const data = JSON.parse(pending);
+                    data.redirectInfo = window.currentProductPage;
+                    sessionStorage.setItem('pending_order', JSON.stringify(data));
+                }
+
+                const res = await fetch(url); const html = await res.text();
+                document.getElementById('main-content').innerHTML = html; window.scrollTo(0, 0);
+
+                const methodId = url.split('_').pop().split('.')[0];
+                const paymentData = window.globalPaymentMethods ? window.globalPaymentMethods[methodId] : null;
+
+                setTimeout(() => {
+                    const el = document.getElementById('payment-final-amount'), el2 = document.getElementById('payment-final-amount-en'), el3 = document.getElementById('logo-amount-val');
+                    if (el) el.innerText = amount; if (el2) el2.innerText = amount; if (el3) el3.innerText = amount + ' ৳';
+
+                    // Update verification logo if dynamic link exists (Image or Video)
+                    if (paymentData && paymentData.verifyImage && paymentData.verifyImage.includes('://')) {
+                        const mediaUrl = paymentData.verifyImage;
+                        const isVideo = mediaUrl.toLowerCase().match(/\.(mp4|webm|ogg|mov|avi)/) || mediaUrl.includes('youtube.com') || mediaUrl.includes('youtu.be');
+                        const logoImg = document.querySelector('.payment-logo-img');
+
+                        if (isVideo) {
+                            if (logoImg) logoImg.style.display = 'none';
+                            let vContainer = document.querySelector('.payment-video-logo-box');
+                            if (!vContainer) {
+                                vContainer = document.createElement('div');
+                                vContainer.className = 'payment-video-logo-box';
+                                vContainer.style.height = '80px';
+                                vContainer.style.width = '120px'; // Wider for better video view
+                                vContainer.style.borderRadius = '12px';
+                                vContainer.style.overflow = 'hidden';
+                                vContainer.style.display = 'flex';
+                                vContainer.style.alignItems = 'center';
+                                vContainer.style.justifyContent = 'center';
+                                const logoBox = document.querySelector('.payment-logo-box');
+                                if (logoBox) logoBox.insertBefore(vContainer, logoBox.firstChild);
+                            }
+
+                            if (mediaUrl.includes('youtube.com') || mediaUrl.includes('youtu.be')) {
+                                let videoId = "";
+                                if (mediaUrl.includes('v=')) videoId = mediaUrl.split('v=')[1].split('&')[0];
+                                else if (mediaUrl.includes('youtu.be/')) videoId = mediaUrl.split('youtu.be/')[1].split('?')[0];
+                                if (videoId) {
+                                    vContainer.innerHTML = `<iframe src="https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&loop=1&playlist=${videoId}&controls=0" frameborder="0" style="width:100%; height:100%; pointer-events:none;"></iframe>`;
+                                }
+                            } else {
+                                vContainer.innerHTML = `<video src="${mediaUrl}" autoplay muted loop playsinline style="width:100%; height:100%; object-fit:cover;"></video>`;
+                            }
+                        } else {
+                            if (logoImg) {
+                                logoImg.src = mediaUrl;
+                                logoImg.style.display = 'block';
+                            }
+                            const oldV = document.querySelector('.payment-video-logo-box');
+                            if (oldV) oldV.remove();
+                        }
+                    }
+                }, 150);
+                if (pushState) { const method = url.split('_').pop().split('.')[0]; history.pushState({ page: 'payment', url: url, amount: amount }, 'Payment', `?page=payment&method=${method}&amount=${amount}`); }
+                safeLoadScript('pages/payment/js/payment.js', () => { if(typeof initPaymentPage === 'function') initPaymentPage(); });
+            } catch (error) { console.error("Error loading payment:", error); }
+        }
+
+        window.copyNumber = function(num) {
+            const el = document.createElement("textarea"); el.value = num; document.body.appendChild(el); el.select();
+            try { document.execCommand('copy'); showToast("Number copied: " + num, "নম্বর কপি হয়েছে: " + num, "fa-copy"); } catch (err) {}
+            document.body.removeChild(el);
+        };
+
+        function switchLang(lang) {
+            const en = document.getElementById('rules-en'), bn = document.getElementById('rules-bn'), btns = document.querySelectorAll('.lang-btn');
+            if (!en || !bn) return;
+            if (lang === 'en') { en.style.display = 'flex'; bn.style.display = 'none'; btns[0].classList.add('active'); btns[1].classList.remove('active'); }
+            else { en.style.display = 'none'; bn.style.display = 'flex'; btns[0].classList.remove('active'); btns[1].classList.add('active'); }
+        }
+
+        function handleRestrictedAccess() {
+            const restriction = sessionStorage.getItem('userRestriction');
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('page') === 'banned_appeal') return;
+
+            if (restriction === 'suspended') loadBannedPage();
+            else loadDeletedPage();
+        }
+
+        window.onload = async () => {
+            const restriction = sessionStorage.getItem('userRestriction');
+            const urlParams = new URLSearchParams(window.location.search);
+            const page = urlParams.get('page');
+            const shopId = urlParams.get('shopId');
+
+            // ১. যদি ইউজার ব্যান থাকে, তবে হেডার-ফুটার কিছুই লোড হবে না
+            if (restriction) {
+                toggleGlobalUI(false);
+                handleRestrictedAccess();
+
+                // যদি রিলোড দিয়ে আপিল পেজে আসার চেষ্টা করে, তাকে আবার মেইন ব্যান পেজে ফেরত পাঠানো হবে
+                if (page === 'banned_appeal') {
+                    setTimeout(() => handleRestrictedAccess(), 100);
+                }
+                return;
+            }
+
+            loadHeader(); loadMobileHeader(); loadMobileMenu(); loadFooter();
+
+            // Start Global Listeners for instant home data
+            startGlobalListeners();
+
+            if (page === 'uidtopup') loadProductPage('pages/shop/UID Topup BD/html/uid_topup_bd.html', false, shopId);
+            else if (page === 'spin') { const pkg = urlParams.get('package'); if (pkg === 'spins') loadSpinPackage('pages/spin/spins/html/spins.html', false); else loadSpin(false); }
+            else if (page === 'my-order') loadMyOrder(false);
+            else if (page === 'profile') {
+                const sub = urlParams.get('sub');
+                if (sub === 'topup_history') loadProfileSubPage('pages/profile/topup_history/html/topup_history.html', false);
+                else if (sub === 'add_funds') loadProfileSubPage('pages/profile/add_funds/html/add_funds.html', false);
+                else if (sub === 'inventory_withdraw') loadProfileSubPage('pages/profile/inventory_withdraw/html/inventory_withdraw.html', false);
+                else if (sub === 'account') loadProfileSubPage('pages/profile/account/html/account.html', false);
+                else loadProfile(false);
+            }
+            else if (page === 'weeklymonthly') loadProductPage('pages/shop/Weekly Monthly/html/weekly_monthly.html', false, shopId);
+            else if (page === 'weeklylite') loadProductPage('pages/shop/Weekly Lite/html/weekly_lite.html', false, shopId);
+            else if (page === 'leveluppass') loadProductPage('pages/shop/Level Up Pass/html/level_up_pass.html', false, shopId);
+            else if (page === 'uidevoaccess') loadProductPage('pages/shop/UID Evo Access/html/uid_evo_access.html', false, shopId);
+            else if (page === 'product' || shopId) {
+                // Handle dynamic shops or reload on generic product page
+                if (shopId) {
+                    try {
+                        const shopDoc = await db.collection("shops").doc(shopId).get();
+                        if (shopDoc.exists) {
+                            const data = shopDoc.data();
+                            if (data.pageUrl) loadProductPage(data.pageUrl, false, shopId);
+                            else loadShop(false);
+                        } else {
+                            loadShop(false);
+                        }
+                    } catch (e) {
+                        console.error("Reload Error:", e);
+                        loadShop(false);
+                    }
+                } else {
+                    loadShop(false);
+                }
+            }
+            else if (page === 'offers') loadOffers(false);
+            else if (page === 'login') loadLoginPage(false);
+            else if (page === 'register') loadRegisterPage(false);
+            else if (page === 'privacy-policy') loadPrivacyPolicy(false);
+            else if (page === 'terms-conditions') loadTermsConditions(false);
+            else if (page === 'refund-policy') loadRefundPolicy(false);
+            else if (page === 'banned') loadBannedPage(false);
+            else if (page === 'deleted') loadDeletedPage(false);
+            else if (page === 'payment') { const m = urlParams.get('method'), a = urlParams.get('amount'); if (m && a) loadPaymentPage(`pages/payment/html/payment_${m}.html`, a, false); else loadShop(false); }
+            else loadShop(false);
+        };
+
+        window.addEventListener('popstate', (event) => {
+            const restriction = sessionStorage.getItem('userRestriction');
+            if (restriction) {
+                const urlParams = new URLSearchParams(window.location.search);
+                if (urlParams.get('page') === 'banned_appeal') {
+                    loadBannedAppeal(false);
+                    return;
+                }
+
+                if (restriction === 'suspended') {
+                    loadBannedPage(false);
+                    history.pushState({ page: 'banned' }, 'Account Suspended', '?page=banned');
+                } else {
+                    loadDeletedPage(false);
+                    history.pushState({ page: 'deleted' }, 'Account Banned', '?page=deleted');
+                }
+                return;
+            }
+
+            if (event.state) {
+                if (event.state.page === 'shop') loadShop(false);
+                else if (event.state.page === 'spin') loadSpin(false);
+                else if (event.state.page === 'my_order') loadMyOrder(false);
+                else if (event.state.page === 'offers') loadOffers(false);
+                else if (event.state.page === 'profile') loadProfile(false);
+                else if (event.state.page === 'profile_sub') loadProfileSubPage(event.state.url, false);
+                else if (event.state.page === 'spin_package') loadSpinPackage(event.state.url, false);
+                else if (event.state.page === 'product') loadProductPage(event.state.url, false, event.state.shopId);
+                else if (event.state.page === 'login') loadLoginPage(false);
+                else if (event.state.page === 'register') loadRegisterPage(false);
+                else if (event.state.page === 'privacy_policy') loadPrivacyPolicy(false);
+                else if (event.state.page === 'terms_conditions') loadTermsConditions(false);
+                else if (event.state.page === 'refund_policy') loadRefundPolicy(false);
+                else if (event.state.page === 'banned') loadBannedPage(false);
+                else if (event.state.page === 'deleted') loadDeletedPage(false);
+                else if (event.state.page === 'payment') loadPaymentPage(event.state.url, event.state.amount, false);
+            } else loadShop(false);
+        });
+    </script>
+</body>
+</html>
